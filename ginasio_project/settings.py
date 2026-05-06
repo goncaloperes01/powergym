@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+import dj_database_url # Adiciona isto
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -10,7 +11,7 @@ SECRET_KEY = 'django-insecure-YOUR_SECRET_KEY_HERE'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 INSTALLED_APPS = [
@@ -25,6 +26,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -54,15 +56,13 @@ TEMPLATES = [
 WSGI_APPLICATION = 'ginasio_project.wsgi.application'
 
 # LIGAÇÃO AO POSTGRESQL CORRIGIDA
+# A tua nova configuração de Base de Dados
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'ginasio_db',
-        'USER': 'postgres',
-        'PASSWORD': 'Guga2601!', # Atenção: Se a tua password do pgAdmin for diferente, muda aqui (ex: 'admin' ou 'root')
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
+    'default': dj_database_url.config(
+        # COLA AQUI O TEU LINK DO NEON.TECH (ENTRE AS ASPAS)
+        default='postgresql://neondb_owner:npg_gRhyINn8k3Xt@ep-floral-band-ab9knw9i-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require',
+        conn_max_age=600
+    )
 }
 
 # Password validation
@@ -88,9 +88,10 @@ USE_I18N = True
 USE_TZ = True
 
 # Ficheiros Estáticos (CSS/JS)
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'  # <- Adicionada a barra no início
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage' # <- Linha Nova
 
 # Pasta das Imagens (Media)
 MEDIA_URL = '/media/'
