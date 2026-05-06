@@ -117,6 +117,9 @@ CLOUDINARY_STORAGE = {
     'API_SECRET': 'CvquxV9CQxTtT91QuPPik1z2CgQ',
 }
 
+# A linha antiga de volta para a biblioteca não chocar
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 # Configuração Unificada de Armazenamento (Django 4.2+)
 STORAGES = {
     "default": {
