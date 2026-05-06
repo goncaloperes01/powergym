@@ -5,19 +5,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Sistema de Gestão - Ginásio{% endblock %}</title>
+    
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- O NOSSO FICHEIRO CSS EXTERNO -->
     <link href="{% static 'css/style.css' %}" rel="stylesheet">
-    <link rel="shortcut icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
-</head>x
+    
+    <!-- PACK COMPLETO DE FAVICONS (PC e Mobile) -->
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'images/site.webmanifest' %}">
+    <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}">
+</head>
 <body>
 
     <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container">
+            <!-- LOGOTIPO COM LINK PARA A PÁGINA PRINCIPAL E CSS CORRIGIDO -->
             <a class="navbar-brand" href="{% url 'index' %}">
-                <img src="{% static 'images/logo.png' %}" alt="Power Gym Logo" style="height: 40px; width: auto;">
+                <img src="{% static 'images/logo.png' %}" alt="Power Gym Logo" style="max-height: 50px; width: auto; object-fit: contain;">
             </a>
+            
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
             </button>
@@ -35,10 +44,10 @@
             <li class="nav-item"><a class="nav-link" href="{% url 'aula_list' %}">Aulas</a></li>
             <li class="nav-item"><a class="nav-link" href="{% url 'planotreino_list' %}">Treinos</a></li>
             <li class="nav-item"><a class="nav-link" href="{% url 'pagamento_list' %}">Finanças</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'exercicio_list' %}" class="teus-estilos-aqui">Exercícios</a>
-            <li class="nav-item"><a class="nav-link" href="{% url 'modalidade_list' %}" class="teus-estilos-aqui">Modalidades</a>
-            <li class="nav-item"><a class="nav-link" href="{% url 'inscricao_list' %}" class="teus-estilos-aqui">Inscrições</a>
-            <li class="nav-item"><a class="nav-link" href="{% url 'gestao_acessos' %}" class="teus-estilos-aqui">Acessos</a>
+            <li class="nav-item"><a class="nav-link" href="{% url 'exercicio_list' %}">Exercícios</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'modalidade_list' %}">Modalidades</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'inscricao_list' %}">Inscrições</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'gestao_acessos' %}">Acessos</a></li>
         
         <!-- Se for o Cliente, mostra só o atalho para a conta dele -->
         {% else %}
@@ -62,7 +71,7 @@
         </li>
     {% endif %}
 
-</ul>
+                </ul>
             </div>
         </div>
     </nav>
