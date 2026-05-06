@@ -20,7 +20,9 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'cloudinary_storage',
     'django.contrib.staticfiles',
+    'cloudinary',
     'ginasio',
 ]
 
@@ -108,3 +110,12 @@ import os # Garante que tens este import lá no topo do ficheiro, se não tivere
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Configuração do Cloudinary (Fotos)
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dfoqhtuci',
+    'API_KEY': '853932941335875',
+    'API_SECRET': 'CvquxV9CQxTtT91QuPPik1z2CgQ',
+}
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
