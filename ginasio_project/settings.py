@@ -117,8 +117,8 @@ CLOUDINARY_STORAGE = {
     'API_SECRET': 'CvquxV9CQxTtT91QuPPik1z2CgQ',
 }
 
-# A linha antiga de volta para a biblioteca não chocar
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# A linha antiga de volta (mas sem a palavra Manifest)
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # Configuração Unificada de Armazenamento (Django 4.2+)
 STORAGES = {
@@ -126,6 +126,6 @@ STORAGES = {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }
