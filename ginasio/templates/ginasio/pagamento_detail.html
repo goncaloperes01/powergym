@@ -1,0 +1,77 @@
+{% extends 'ginasio/base.html' %}
+
+{% block title %}Detalhes da Fatura - PowerGym{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body p-4 p-md-5">
+                    <!-- Cabeçalho -->
+                    <div class="d-flex justify-content-between align-items-center border-bottom pb-4 mb-4">
+                        <h3 class="fw-bold mb-0">Fatura / Recibo</h3>
+                        <div>
+                            {% if pagamento.estado == 'Liquidado' %}
+                                <span class="badge bg-success fs-6 py-2 px-3 rounded-pill">Liquidado</span>
+                            {% elif pagamento.estado == 'Atrasado' %}
+                                <span class="badge bg-danger fs-6 py-2 px-3 rounded-pill">Atrasado</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark fs-6 py-2 px-3 rounded-pill">Pendente</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Dados do Pagamento -->
+                    <div class="mb-4">
+                        <div class="row mb-3">
+                            <div class="col-sm-5 text-muted">Sócio Pagador:</div>
+                            <div class="col-sm-7 fw-bold text-primary">
+                                <!-- Se tiveres a página de sócio, isto fica um link clicável -->
+                                <a href="{% url 'socio_detail' pagamento.socio.pk %}" class="text-decoration-none">{{ pagamento.socio.nome }}</a>
+                            </div>
+                        </div>
+
+                        <!-- NOVOS CAMPOS ADICIONADOS AQUI -->
+                        <div class="row mb-3">
+                            <div class="col-sm-5 text-muted">Descrição:</div>
+                            <div class="col-sm-7 fw-bold">{{ pagamento.descricao }}</div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-sm-5 text-muted">Data Limite (Vencimento):</div>
+                            <div class="col-sm-7 fw-bold text-danger">{{ pagamento.data_vencimento|date:"d \d\e F \d\e Y" }}</div>
+                        </div>
+                        <!-- ----------------------------- -->
+
+                        <div class="row mb-3">
+                            <div class="col-sm-5 text-muted">Data da Transação:</div>
+                            <div class="col-sm-7 fw-bold">{{ pagamento.data_pagamento|date:"d \d\e F \d\e Y"|default:"-" }}</div>
+                        </div>
+
+                        <div class="row mb-3 align-items-center mt-4">
+                            <div class="col-sm-5 text-muted">Valor Faturado:</div>
+                            <div class="col-sm-7 fs-3 fw-bold">{{ pagamento.valor }} €</div>
+                        </div>
+                    </div>
+
+                    <!-- Botões de Ação -->
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center border-top pt-4 mt-4 gap-3">
+                        <a href="{% url 'pagamento_list' %}" class="btn btn-outline-secondary rounded-pill px-4 w-100 w-md-auto">
+                            Voltar à Tesouraria
+                        </a>
+                        <div class="d-flex gap-2 w-100 w-md-auto justify-content-end">
+                            <a href="{% url 'pagamento_update' pagamento.pk %}" class="btn btn-primary rounded-pill px-4 shadow-sm flex-grow-1 flex-md-grow-0">
+                                Editar / Liquidar
+                            </a>
+                            <a href="{% url 'pagamento_delete' pagamento.pk %}" class="btn btn-danger rounded-pill px-4 shadow-sm flex-grow-1 flex-md-grow-0">
+                                Cancelar Registo
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

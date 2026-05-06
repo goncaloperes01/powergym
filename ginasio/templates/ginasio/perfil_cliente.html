@@ -1,0 +1,230 @@
+{% extends 'ginasio/base.html' %}
+
+{% block title %}A Minha Conta - PowerGym{% endblock %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+    
+    <!-- Sistema de Mensagens -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show rounded-pill shadow-sm" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Cabeçalho do Cliente COM FOTOGRAFIA -->
+    <div class="row mb-4 align-items-center bg-dark text-white p-4 rounded-4 shadow-sm mx-0">
+        <div class="col-md-8 d-flex align-items-center gap-4">
+            
+            <!-- MAGIA DA FOTO: Se tiver foto mostra, senão mostra um ícone genérico -->
+            {% if socio.foto %}
+                <img src="{{ socio.foto.url }}" alt="Foto de {{ socio.nome }}" class="rounded-circle object-fit-cover border border-3 border-warning shadow" style="width: 85px; height: 85px;">
+            {% else %}
+                <div class="rounded-circle bg-secondary d-flex justify-content-center align-items-center border border-3 border-warning shadow" style="width: 85px; height: 85px;">
+                    <i class="bi bi-person-fill fs-1"></i>
+                </div>
+            {% endif %}
+            
+            <div>
+                <h2 class="fw-bold mb-1">Olá, {{ socio.nome }}! 👋</h2>
+                <p class="text-white-50 mb-0">Bem-vindo à tua Área de Sócio PowerGym.</p>
+            </div>
+        </div>
+        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+            <span class="badge bg-primary fs-6 py-2 px-3 rounded-pill shadow-sm">
+                Sócio desde {{ socio.dataAdesao|date:"M Y" }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Secção 1: Dados & Nova Inscrição -->
+    <div class="row g-4 mb-4">
+        
+        <!-- Cartão de Dados Pessoais -->
+        <!-- Cartão de Dados Pessoais + QR Code de Acesso -->
+<div class="col-lg-5">
+    <div class="card shadow-sm border-0 h-100 rounded-4 bg-primary text-white overflow-hidden">
+        <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-start">
+                <!-- Coluna da Esquerda: Dados -->
+                <div>
+                    <h5 class="fw-bold mb-4">
+                        <i class="bi bi-person-lines-fill text-warning"></i> Os Meus Dados
+                    </h5>
+                    <p class="mb-2"><strong>Nome:</strong> <span class="fw-light">{{ socio.nome }}</span></p>
+                    <p class="mb-2"><strong>Email:</strong> <span class="fw-light">{{ socio.email }}</span></p>
+                    <p class="mb-2"><strong>Contacto:</strong> <span class="fw-light">{{ socio.contacto|default:"Não definido" }}</span></p>
+                    <p class="mb-0"><strong>Data de Nascimento:</strong> <span class="fw-light">{{ socio.dataNascimento|date:"d/m/Y"|default:"Não definida" }}</span></p>
+                </div>
+
+                <!-- Coluna da Direita: QR Code -->
+                <div class="text-center bg-white p-2 rounded-3 shadow-sm ml-3">
+                    <img src="data:image/png;base64,{{ qr_code }}" alt="QR Code de Acesso" style="width: 100px; height: 100px;">
+                    <small class="text-dark d-block fw-bold mt-1" style="font-size: 10px; letter-spacing: 1px;">PASSE DIGITAL</small>
+                </div>
+            </div>
+        </div>
+        <!-- Rodapé do Cartão -->
+        <div class="bg-dark bg-opacity-25 py-2 text-center">
+            <small class="fw-light opacity-75"><i class="bi bi-qr-code-scan me-1"></i> Mostra este código na entrada para fazer check-in</small>
+        </div>
+    </div>
+</div>
+
+        <!-- Cartão para Marcar uma Nova Aula -->
+        <div class="col-lg-7">
+            <div class="card shadow-sm border-0 h-100 rounded-4 bg-light">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold text-dark mb-3"><i class="bi bi-plus-circle-fill text-success"></i> Marcar Nova Aula</h5>
+                    <p class="text-muted small mb-3">Escolhe a aula em que queres participar e garante já o teu lugar.</p>
+                    
+                    <form method="POST" action="{% url 'perfil_cliente' %}" class="d-flex flex-column flex-md-row gap-2">
+                        {% csrf_token %}
+                        <select name="aula_id" class="form-select border-0 shadow-sm" required>
+                            <option value="" disabled selected>-- Seleciona a Aula disponível --</option>
+                            {% for aula in aulas_disponiveis %}
+                                <option value="{{ aula.id }}">{{ aula }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" class="btn btn-success fw-bold shadow-sm px-4 rounded-3">Inscrever</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Secção 2: Agenda & Finanças -->
+    <div class="row g-4 mb-4">
+        <!-- CARTÃO: As Minhas Inscrições Atuais -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 h-100 rounded-4">
+                <div class="card-header bg-white border-0 pt-4 pb-0 px-4">
+                    <h5 class="fw-bold"><i class="bi bi-calendar-check text-success"></i> A Minha Agenda de Treinos</h5>
+                </div>
+                <div class="card-body p-4">
+                    {% if inscricoes %}
+                        <ul class="list-group list-group-flush">
+                            {% for inscricao in inscricoes %}
+                            <li class="list-group-item px-0 py-3 border-bottom">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1 fw-bold text-dark">{{ inscricao.aula }}</h6>
+                                        <span class="badge bg-light text-dark border"><i class="bi bi-check-circle-fill text-success"></i> Lugar garantido</span>
+                                    </div>
+                                    <a href="{% url 'inscricao_delete' inscricao.pk %}" class="btn btn-sm btn-outline-danger rounded-pill">Cancelar</a>
+                                </div>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <div class="text-center py-5 text-muted">
+                            <i class="bi bi-calendar-x fs-1 opacity-25 mb-2 d-block"></i>
+                            Ainda não marcaste nenhum treino.<br>Usa o menu acima para te inscreveres!
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- CARTÃO: A Minha Faturação -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 h-100 rounded-4">
+                <div class="card-header bg-white border-0 pt-4 pb-0 px-4">
+                    <h5 class="fw-bold"><i class="bi bi-wallet2 text-primary"></i> As Minhas Finanças</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="table-responsive">
+                        <table class="table table-borderless align-middle">
+                            <thead class="table-light rounded-top">
+                                <tr>
+                                    <th>Descrição</th>
+                                    <th>Valor</th>
+                                    <th>Limite</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for pagamento in pagamentos %}
+                                <tr class="border-bottom">
+                                    <td>
+                                        {% if pagamento.frequencia == 'Mensal' %}
+                                            Mensalidade
+                                        {% else %}
+                                            {{ pagamento.descritivo|default:"Serviço Extra" }}
+                                        {% endif %}
+                                    </td>
+                                    <td class="fw-bold text-dark">{{ pagamento.valor|floatformat:2 }} €</td>
+                                    <td class="text-muted small">{{ pagamento.data_vencimento|date:"d/m/Y" }}</td>
+                                    <td>
+                                        {% if pagamento.estado == 'Liquidado' %}
+                                            <span class="badge bg-success">Pago</span>
+                                        {% elif pagamento.estado == 'Atrasado' %}
+                                            <span class="badge bg-danger">Atrasado</span>
+                                        {% else %}
+                                            <span class="badge bg-warning text-dark">A Pagar</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center py-4 text-muted">Não tens pagamentos registados.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Secção 3: O Meu Plano de Treino -->
+    <div class="row g-4 mb-5">
+        <div class="col-12">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-dark text-white border-0 pt-4 pb-3 px-4 rounded-top-4">
+                    <h5 class="fw-bold mb-0"><i class="bi bi-card-checklist text-warning"></i> O Meu Plano de Treino</h5>
+                </div>
+                <div class="card-body p-4">
+                    {% if plano_atual %}
+                        <h6 class="fw-bold text-primary mb-3">Plano em vigor (desde {{ plano_atual.data_inicio|date:"d/m/Y" }})</h6>
+                        {% if exercicios %}
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Exercício</th>
+                                            <th>Séries</th>
+                                            <th>Repetições</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for exercicio in exercicios %}
+                                        <tr>
+                                            <td class="fw-bold text-dark">{{ exercicio }}</td>
+                                            <td><span class="badge bg-light text-dark border">{{ exercicio.series|default:"-" }}</span></td>
+                                            <td><span class="badge bg-light text-dark border">{{ exercicio.repeticoes|default:"-" }}</span></td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <p class="text-muted mb-0">Este plano ainda não tem exercícios registados. Pede ao teu treinador para os adicionar!</p>
+                        {% endif %}
+                    {% else %}
+                        <div class="text-center py-4 text-muted">
+                            <i class="bi bi-clipboard-x fs-1 opacity-25 mb-2 d-block"></i>
+                            Ainda não tens um plano de treino atribuído.<br>Fala com um dos nossos treinadores na receção!
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+{% endblock %}

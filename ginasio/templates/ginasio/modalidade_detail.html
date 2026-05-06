@@ -1,0 +1,52 @@
+{% extends 'ginasio/base.html' %}
+
+{% block title %}Detalhe da Modalidade - PowerGym{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-8">
+        <h2 class="fw-bold mb-0">Detalhe da Atividade</h2>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'modalidade_list' %}">Modalidades</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ modalidade.nome }}</li>
+            </ol>
+        </nav>
+    </div>
+    <div class="col-4 text-end">
+        <a href="{% url 'modalidade_list' %}" class="btn btn-outline-secondary me-2">Voltar ao Catálogo</a>
+        <!-- BOTÃO DE EDITAR NOVO: -->
+        <a href="{% url 'modalidade_update' modalidade.pk %}" class="btn btn-warning fw-bold">Editar Dados</a>
+        <a href="{% url 'modalidade_delete' modalidade.pk %}" class="btn btn-danger">Apagar</a>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-5">
+                <div class="d-flex justify-content-between align-items-center border-bottom pb-4 mb-4">
+                    <h1 class="display-5 fw-bold text-primary mb-0">{{ modalidade.nome }}</h1>
+                    {% if modalidade.intensidade %}
+                    <div class="text-end">
+                        <span class="d-block text-muted small text-uppercase fw-bold mb-1">Nível</span>
+                        <span class="badge bg-dark fs-6 py-2 px-3 rounded-pill">{{ modalidade.intensidade }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="content mt-4">
+                    <h5 class="fw-bold mb-3 text-secondary">Sobre a Atividade</h5>
+                    {% if modalidade.descricao %}
+                        <div class="fs-5 text-dark lh-base">{{ modalidade.descricao|linebreaks }}</div>
+                    {% else %}
+                        <p class="text-muted fst-italic">Não existe uma descrição detalhada para esta modalidade no momento.</p>
+                    {% endif %}
+                </div>
+                <div class="mt-5 pt-4 border-top text-center">
+                    <a href="{% url 'aula_list' %}" class="btn btn-lg btn-success rounded-pill px-5 fw-bold shadow-sm">Ver Horários Disponíveis</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

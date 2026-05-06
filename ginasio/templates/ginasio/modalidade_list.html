@@ -1,0 +1,58 @@
+{% extends 'ginasio/base.html' %}
+
+{% block title %}Modalidades - PowerGym{% endblock %}
+
+{% block content %}
+<div class="row mb-4 align-items-center">
+    <div class="col-8">
+        <h2 class="fw-bold mb-0">Catálogo de Modalidades</h2>
+        <p class="text-muted">Descubra todas as atividades disponíveis para atingir a sua melhor forma.</p>
+    </div>
+    <div class="col-4 text-end">
+        <a href="{% url 'modalidade_create' %}" class="btn btn-primary">+ Adicionar Modalidade</a>
+    </div>
+</div>
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for modalidade in modalidades %}
+    <div class="col">
+        <div class="card h-100 border-0 shadow-sm overflow-hidden">
+            
+            <!-- Barra superior colorida com o nome -->
+            <div class="bg-primary bg-gradient p-4 text-center text-white">
+                <h4 class="fw-bold mb-0">{{ modalidade.nome }}</h4>
+            </div>
+            
+            <div class="card-body p-4 text-center d-flex flex-column justify-content-between">
+                
+                <div class="mb-4">
+                    {% if modalidade.intensidade %}
+                        <div class="text-muted small text-uppercase fw-bold mb-3 d-flex justify-content-center align-items-center gap-2">
+                            Intensidade: 
+                            <!-- Pequena barra visual baseada na intensidade, se existir -->
+                            <span class="badge bg-secondary rounded-pill">{{ modalidade.intensidade }}</span>
+                        </div>
+                    {% endif %}
+                    
+                    {% if modalidade.descricao %}
+                        <p class="card-text text-secondary mb-0">
+                            <!-- Mostra só as primeiras 15 palavras na lista, para não ficar gigante -->
+                            {{ modalidade.descricao|truncatewords:15 }}
+                        </p>
+                    {% else %}
+                        <p class="card-text text-muted fst-italic mb-0">Sem descrição curta.</p>
+                    {% endif %}
+                </div>
+                
+                <a href="{% url 'modalidade_detail' modalidade.pk %}" class="btn btn-outline-primary w-100 fw-semibold rounded-pill">Ver Detalhes da Aula</a>
+            </div>
+            
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center py-5">
+        <p class="text-muted fs-5">O catálogo de modalidades está a ser preparado. Volte mais tarde!</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

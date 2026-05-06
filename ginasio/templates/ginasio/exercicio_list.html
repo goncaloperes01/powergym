@@ -1,0 +1,83 @@
+{% extends 'ginasio/base.html' %}
+
+{% block title %}Catálogo de Exercícios - PowerGym{% endblock %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+    
+    <!-- Cabeçalho com Botão de Criar -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0"><i class="bi bi-dumbbell text-primary me-2"></i>Catálogo de Exercícios</h2>
+            <p class="text-muted mb-0">Gestão de movimentos e máquinas do ginásio.</p>
+        </div>
+        <a href="{% url 'exercicio_create' %}" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">
+            <i class="bi bi-plus-lg me-2"></i>Criar Novo Exercício
+        </a>
+    </div>
+
+    <div class="row g-4">
+        {% for exercicio in object_list %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm rounded-4 hover-shadow transition">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div class="bg-light p-3 rounded-3">
+                            <i class="bi bi-lightning-charge-fill text-warning fs-4"></i>
+                        </div>
+                        <span class="badge bg-info text-dark rounded-pill px-3">
+                            {{ exercicio.planoTreino.socio.nome|default:"Geral" }}
+                        </span>
+                    </div>
+                    
+                    <h5 class="fw-bold text-dark mb-1">{{ exercicio.nome|default:"Exercício sem nome" }}</h5>
+                    <p class="text-muted small mb-3">
+                        <i class="bi bi-clipboard-data me-1"></i> 
+                        Plano: {{ exercicio.planoTreino|default:"Nenhum" }}
+                    </p>
+
+                    <div class="row g-2 mb-4">
+                        <div class="col-6">
+                            <div class="bg-light rounded-3 p-2 text-center">
+                                <small class="text-muted d-block">Séries</small>
+                                <span class="fw-bold">{{ exercicio.series|default:"-" }}</span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="bg-light rounded-3 p-2 text-center">
+                                <small class="text-muted d-block">Reps</small>
+                                <span class="fw-bold">{{ exercicio.repeticoes|default:"-" }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'exercicio_detail' exercicio.pk %}" class="btn btn-outline-dark rounded-pill btn-sm fw-bold">
+                            <i class="bi bi-eye me-1"></i> Ver Detalhes
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <div class="card border-0 shadow-sm rounded-4 p-5">
+                <i class="bi bi-search fs-1 text-muted opacity-25 mb-3"></i>
+                <h5 class="text-muted">Ainda não foram registados exercícios.</h5>
+                <p class="text-muted mb-0">Clica no botão "Criar Novo Exercício" para começar.</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .hover-shadow:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    }
+    .transition {
+        transition: all 0.3s ease;
+    }
+</style>
+{% endblock %}

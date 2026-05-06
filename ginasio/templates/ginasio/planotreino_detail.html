@@ -1,0 +1,87 @@
+{% extends 'ginasio/base.html' %}
+
+{% block title %}Detalhe do Plano - PowerGym{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-8">
+        <h2 class="fw-bold mb-0 text-dark">Ficha de Treino</h2>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 mt-2">
+                <li class="breadcrumb-item"><a href="{% url 'planotreino_list' %}" class="text-decoration-none">Planos</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ plano.socio.nome }}</li>
+            </ol>
+        </nav>
+    </div>
+    <div class="col-4 text-end">
+        <a href="{% url 'planotreino_list' %}" class="btn btn-outline-secondary px-3 fw-medium me-2">Voltar</a>
+        <a href="{% url 'planotreino_update' plano.pk %}" class="btn btn-warning fw-bold px-3">Editar Plano</a>
+        <a href="{% url 'planotreino_delete' plano.pk %}" class="btn btn-danger">Apagar</a>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Cabeçalho do Plano -->
+    <div class="col-12">
+        <div class="card border-0 shadow-sm bg-dark text-white p-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="text-light opacity-75 mb-1">Plano para {{ plano.socio.nome }}</h5>
+                    <h2 class="fw-bold text-info mb-0">{{ plano.objetivo }}</h2>
+                </div>
+                <div class="text-end">
+                    <p class="small text-light opacity-75 mb-0 text-uppercase">Início</p>
+                    <h5 class="fw-bold mb-0">{{ plano.data_inicio|date:"d M Y" }}</h5>
+                </div>
+            </div>
+            <hr class="border-light opacity-25">
+            <p class="mb-0 text-light opacity-75"><i class="bi bi-person-badge"></i> Prescrito por: <strong>{{ plano.treinador.nome }}</strong></p>
+        </div>
+    </div>
+
+    <!-- Tabela dos Exercícios associados a este Plano -->
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-light p-4 d-flex justify-content-between align-items-center border-bottom">
+                <h5 class="fw-bold text-dark mb-0">Rotina de Exercícios</h5>
+                <!-- Este botão leva o ID do plano para já preencher automaticamente -->
+                <a href="{% url 'exercicio_create' %}?plano={{ plano.pk }}" class="btn btn-primary fw-bold px-4">+ Adicionar Exercício</a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0 border-0">
+                        <thead class="table-light text-secondary small text-uppercase">
+                            <tr>
+                                <th class="ps-4">Exercício</th>
+                                <th class="text-center">Séries</th>
+                                <th class="text-center">Repetições</th>
+                                <th class="text-center">Descanso</th>
+                                <th class="text-end pe-4">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for ex in exercicios %}
+                            <tr>
+                                <td class="ps-4 fw-bold text-dark">{{ ex.nome }}</td>
+                                <td class="text-center fw-medium">{{ ex.series }}x</td>
+                                <td class="text-center fw-medium">{{ ex.repeticoes }}</td>
+                                <td class="text-center text-muted">{{ ex.descanso_segundos }}s</td>
+                                <td class="text-end pe-4">
+                                    <a href="{% url 'exercicio_update' ex.pk %}" class="btn btn-sm btn-outline-warning rounded-pill px-3">Editar</a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center py-5 text-muted">
+                                    <p class="mb-0 fs-5">Ainda não foram adicionados exercícios a este plano.</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

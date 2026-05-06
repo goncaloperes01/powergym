@@ -1,0 +1,74 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sistema de Gestão - Ginásio{% endblock %}</title>
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- O NOSSO FICHEIRO CSS EXTERNO -->
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+</head>x
+<body>
+
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'landing' %}">PowerGym</a> 
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
+    
+    <!-- SE O UTILIZADOR TIVER FEITO LOGIN -->
+    {% if request.user.is_authenticated %}
+        
+        <!-- Se for o Administrador (Tu) mostra o menu completo -->
+        {% if request.user.is_superuser %}
+            <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Dashboard</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'socio_list' %}">Sócios</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'treinador_list' %}">Equipa</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'aula_list' %}">Aulas</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'planotreino_list' %}">Treinos</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'pagamento_list' %}">Finanças</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'exercicio_list' %}" class="teus-estilos-aqui">Exercícios</a>
+            <li class="nav-item"><a class="nav-link" href="{% url 'modalidade_list' %}" class="teus-estilos-aqui">Modalidades</a>
+            <li class="nav-item"><a class="nav-link" href="{% url 'inscricao_list' %}" class="teus-estilos-aqui">Inscrições</a>
+            <li class="nav-item"><a class="nav-link" href="{% url 'gestao_acessos' %}" class="teus-estilos-aqui">Acessos</a>
+        
+        <!-- Se for o Cliente, mostra só o atalho para a conta dele -->
+        {% else %}
+            <li class="nav-item">
+                <a class="nav-link text-primary fw-bold" href="{% url 'perfil_cliente' %}">A Minha Conta</a>
+            </li>
+        {% endif %}
+
+        <!-- Botão de Sair (para ambos) -->
+        <li class="nav-item ms-3">
+            <form action="{% url 'logout' %}" method="post" class="m-0">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill">Sair</button>
+            </form>
+        </li>
+
+    <!-- SE NÃO TIVER LOGIN (Visitantes na página de login, por exemplo) -->
+    {% else %}
+        <li class="nav-item">
+            <a class="nav-link fw-bold" href="{% url 'landing' %}">Voltar ao Site Principal</a>
+        </li>
+    {% endif %}
+
+</ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-4">
+        {% block content %}
+        {% endblock content %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

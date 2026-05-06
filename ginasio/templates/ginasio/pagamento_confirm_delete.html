@@ -1,0 +1,34 @@
+{% extends 'ginasio/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0"><i class="bi bi-exclamation-triangle-fill"></i> Atenção!</h4>
+                </div>
+                <div class="card-body text-center">
+                    <h3 class="card-title mt-2">Cancelar Pagamento</h3>
+                    <p class="lead">
+                        Tem a certeza que pretende apagar o registo de pagamento do sócio <strong>{{ pagamento.socio.nome }}</strong> no valor de <strong>{{ pagamento.valor }} €</strong>?
+                    </p>
+                    <p class="text-muted small">
+                        Esta ação removerá este valor da faturação e da contabilidade do ginásio.
+                    </p>
+                    
+                    <form method="POST" class="mt-4">
+                        {% csrf_token %}
+                        <a href="{% url 'pagamento_detail' pagamento.pk %}" class="btn btn-secondary me-2">
+                            Voltar Atrás
+                        </a>
+                        <button type="submit" class="btn btn-danger">
+                            Sim, Cancelar Registo
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

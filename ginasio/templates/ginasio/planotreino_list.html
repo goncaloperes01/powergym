@@ -1,0 +1,56 @@
+{% extends 'ginasio/base.html' %}
+
+{% block title %}Planos de Treino - PowerGym{% endblock %}
+
+{% block content %}
+<div class="row mb-4 align-items-center">
+    <div class="col-8">
+        <h2 class="fw-bold mb-0 text-dark">Gestão de Planos de Treino</h2>
+        <p class="text-secondary">Acompanhamento dos programas prescritos aos sócios.</p>
+    </div>
+    <div class="col-4 text-end">
+        <a href="{% url 'planotreino_create' %}" class="btn btn-primary fw-bold px-4">+ Criar Novo Plano</a>
+    </div>
+</div>
+
+<div class="table-custom shadow-sm border-0 mb-5">
+    <table class="table table-hover align-middle mb-0">
+        <thead class="table-light text-secondary small text-uppercase">
+            <tr>
+                <th class="ps-4">Sócio Alvo</th>
+                <th>Objetivo Principal</th>
+                <th>Treinador Responsável</th>
+                <th>Data Início</th>
+                <th class="text-end pe-4">Gestão</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for plano in planos %}
+            <tr>
+                <td class="ps-4 fw-bold text-dark">{{ plano.socio.nome }}</td>
+                
+                <td>
+                    <span class="badge bg-info bg-opacity-10 text-dark px-3 py-1 border rounded-pill fw-semibold">
+                        {{ plano.objetivo }}
+                    </span>
+                </td>
+                
+                <td class="text-secondary fw-medium">{{ plano.treinador.nome }}</td>
+                <td class="text-muted">{{ plano.data_inicio|date:"d M Y" }}</td>
+                
+                <td class="text-end pe-4">
+                    <a href="{% url 'planotreino_detail' plano.pk %}" class="btn btn-sm btn-outline-dark px-3 rounded-pill">Ver Ficha</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="text-center py-5 text-muted">
+                    <div class="fs-5 mb-2">📋</div>
+                    Nenhum plano de treino prescrito.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

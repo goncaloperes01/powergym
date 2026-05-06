@@ -1,0 +1,73 @@
+{% extends 'ginasio/base.html' %}
+
+{% block title %}Calendário de Aulas - PowerGym{% endblock %}
+
+{% block content %}
+<div class="row mb-4 align-items-center">
+    <div class="col-8">
+        <h2 class="fw-bold mb-0 text-dark">Agenda de Treinos</h2>
+        <p class="text-secondary">Planeamento e gestão de aulas de grupo.</p>
+    </div>
+    <div class="col-4 text-end">
+        <a href="{% url 'aula_create' %}" class="btn btn-primary fw-bold px-4">+ Agendar Aula</a>
+    </div>
+</div>
+
+<div class="table-custom shadow-sm border-0 mb-5">
+    <table class="table table-hover align-middle mb-0">
+        <thead class="table-light text-secondary small text-uppercase">
+            <tr>
+                <th class="ps-4">Data e Hora</th>
+                <th>Modalidade</th>
+                <th>Professor</th>
+                <th class="text-center">Vagas Máx.</th>
+                <th class="text-end pe-4">Gestão</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for aula in aulas %}
+            <tr>
+                <!-- Uso de badge visual para destacar a data e a hora juntas -->
+                <td class="ps-4">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-dark text-white rounded p-2 text-center me-3" style="min-width: 60px;">
+                            <div class="small text-uppercase lh-1" style="font-size: 0.7rem;">{{ aula.data|date:"M" }}</div>
+                            <div class="fw-bold fs-5 lh-1 mt-1">{{ aula.data|date:"d" }}</div>
+                        </div>
+                        <div>
+                            <span class="fw-bold text-dark d-block">{{ aula.data|date:"l" }}</span>
+                            <span class="text-primary fw-bold">{{ aula.hora }}</span>
+                        </div>
+                    </div>
+                </td>
+                
+                <td>
+                    <span class="badge bg-secondary bg-opacity-10 text-dark px-3 py-2 border rounded-pill fw-semibold">
+                        {{ aula.modalidade.nome }}
+                    </span>
+                </td>
+                
+                <td class="text-secondary fw-medium">
+                    {{ aula.treinador.nome }}
+                </td>
+                
+                <td class="text-center">
+                    <span class="fw-bold text-dark">{{ aula.lotacao }}</span> <span class="text-muted small">pax</span>
+                </td>
+                
+                <td class="text-end pe-4">
+                    <a href="{% url 'aula_detail' aula.pk %}" class="btn btn-sm btn-outline-dark px-3 rounded-pill">Ver Detalhes</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="text-center py-5 text-muted">
+                    <div class="fs-5 mb-2">📅</div>
+                    A agenda do ginásio encontra-se vazia. Comece por planear uma nova aula.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

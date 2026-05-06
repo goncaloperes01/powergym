@@ -1,0 +1,14 @@
+# Esconder a base de dados local
+db.sqlite3
+db.sqlite3-journal
+
+# Esconder as pastas do sistema e ambientes virtuais
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+.env
+
+# Esconder as fotos que tens guardadas no teu computador
+media/

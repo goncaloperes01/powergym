@@ -1,0 +1,46 @@
+{% extends 'ginasio/base.html' %}
+
+{% block title %}Lista de Sócios - PowerGym{% endblock %}
+
+{% block content %}
+<div class="row mb-4 align-items-center">
+    <div class="col-8">
+        <h2 class="fw-bold mb-0">Gestão de Sócios</h2>
+        <p class="text-muted">Lista completa de todos os membros do ginásio.</p>
+    </div>
+    <div class="col-4 text-end">
+        <a href="{% url 'socio_create' %}" class="btn btn-primary">+ Adicionar Sócio</a>
+    </div>
+</div>
+
+<div class="table-responsive table-custom">
+    <table class="table table-hover table-borderless mb-0 align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>Nome do Sócio</th>
+                <th>Email</th>
+                <th>Data Adesão</th>
+                <th class="text-end">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for socio in socios %}
+            <tr>
+                <td><strong>{{ socio.nome }}</strong></td>
+                <td class="text-muted">{{ socio.email }}</td>
+                <td>{{ socio.dataAdesao|date:"d M Y" }}</td>
+                <td class="text-end">
+                    <a href="{% url 'socio_detail' socio.pk %}" class="btn btn-sm btn-outline-secondary">Ver Ficha</a>
+                    <a href="{% url 'socio_update' socio.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
+                    <a href="{% url 'socio_delete' socio.pk %}" class="btn btn-sm btn-outline-danger">Apagar</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" class="text-center py-4 text-muted">Ainda não existem sócios registados no sistema.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

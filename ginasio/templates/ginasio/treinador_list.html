@@ -1,0 +1,44 @@
+{% extends 'ginasio/base.html' %}
+
+{% block title %}Equipa Técnica - PowerGym{% endblock %}
+
+{% block content %}
+<div class="row mb-4 align-items-center">
+    <div class="col-8">
+        <h2 class="fw-bold mb-0">A Nossa Equipa</h2>
+        <p class="text-muted">Conheça os profissionais que o vão ajudar a atingir os seus objetivos.</p>
+    </div>
+    <div class="col-4 text-end">
+        <a href="{% url 'treinador_create' %}" class="btn btn-primary">+ Novo Treinador</a>
+    </div>
+</div>
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for treinador in treinadores %}
+    <div class="col">
+        <div class="card h-100 text-center border-0 shadow-sm py-4">
+            
+            <div class="mx-auto mb-3">
+                {% if treinador.foto %}
+                    <img src="{{ treinador.foto.url }}" class="rounded-circle shadow-sm" style="width: 120px; height: 120px; object-fit: cover;" alt="Foto de {{ treinador.nome }}">
+                {% else %}
+                    <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center mx-auto shadow-sm text-white fs-2 fw-bold" style="width: 120px; height: 120px;">
+                        {{ treinador.nome|make_list|first|upper }}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="card-body">
+                <h5 class="card-title fw-bold text-dark mb-1">{{ treinador.nome }}</h5>
+                <p class="text-primary fw-semibold small text-uppercase tracking-wide mb-3">{{ treinador.especialidade }}</p>
+                <a href="{% url 'treinador_detail' treinador.pk %}" class="btn btn-sm btn-outline-secondary rounded-pill px-4">Ver Currículo</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center py-5">
+        <p class="text-muted fs-5">Ainda não há treinadores registados na equipa.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,177 @@
+{% extends 'ginasio/base.html' %}
+
+{% block title %}Gestão de Acessos - PowerGym{% endblock %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+    
+    <div class="mb-4">
+        <h2 class="fw-bold"><i class="bi bi-shield-lock-fill text-danger me-2"></i>Central de Acessos</h2>
+        <p class="text-muted">Cria administradores, regista staff, associa contas ou elimina acessos existentes.</p>
+    </div>
+
+    <!-- Sistema de Mensagens -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show rounded-pill shadow-sm">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="card shadow-sm border-0 rounded-4 max-w-lg mx-auto">
+        <div class="card-body p-4 p-md-5">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <!-- 1. QUE TIPO DE CONTA QUEREMOS CRIAR/APAGAR? -->
+                <div class="mb-4 bg-light p-3 rounded-3 border">
+                    <label class="form-label fw-bold text-primary">O que pretendes fazer?</label>
+                    <select name="tipo_conta" id="tipo_conta" class="form-select border-0 shadow-sm" required onchange="mudarFormulario()">
+                        <option value="" selected disabled>-- Seleciona uma opção --</option>
+                        <option value="admin">⭐ Criar um Novo Administrador Geral</option>
+                        <option value="treinador_novo">🏋️‍♂️ Registar NOVO Treinador (Ficha + Conta)</option>
+                        <option value="treinador_existente">🔗 Dar conta a Treinador EXISTENTE</option>
+                        <option value="socio_existente">🔗 Associar nova conta a Sócio EXISTENTE</option>
+                        <option value="apagar_utilizador">🗑️ Apagar Conta de Login</option>
+                    </select>
+                </div>
+
+                <!-- 2. DADOS DE LOGIN (Aparecem nas opções de Criar) -->
+                <div id="dados_login" style="display: none;">
+                    <h5 class="fw-bold mb-3 border-bottom pb-2">Credenciais de Acesso</h5>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Nome de Utilizador</label>
+                            <input type="text" name="username" id="input_username" class="form-control" placeholder="Ex: joao_admin">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Palavra-passe</label>
+                            <input type="password" name="password" id="input_password" class="form-control">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold">Email (Opcional para admin)</label>
+                            <input type="email" name="email" class="form-control">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3A. CAMPOS EXCLUSIVOS: NOVO TREINADOR -->
+                <div id="dados_novo_treinador" style="display: none;" class="mb-4">
+                    <h5 class="fw-bold mb-3 border-bottom pb-2 text-info">Dados da Ficha do Treinador</h5>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Nome Completo</label>
+                        <input type="text" name="nome_treinador" id="input_nome_treinador" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Especialidade</label>
+                        <input type="text" name="especialidade" class="form-control" placeholder="Ex: Crossfit, Musculação...">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Fotografia de Perfil</label>
+                        <input type="file" name="foto" class="form-control" accept="image/*">
+                    </div>
+                </div>
+
+                <!-- 3B. CAMPOS EXCLUSIVOS: ASSOCIAR TREINADOR -->
+                <div id="dados_treinador_existente" style="display: none;" class="mb-4">
+                    <h5 class="fw-bold mb-3 border-bottom pb-2 text-info">Escolher Treinador</h5>
+                    <select name="treinador_id" id="input_treinador_id" class="form-select">
+                        <option value="" selected disabled>-- Seleciona o Treinador --</option>
+                        {% for treinador in treinadores_sem_conta %}
+                            <option value="{{ treinador.id }}">{{ treinador.nome }}</option>
+                        {% empty %}
+                            <option value="" disabled>Todos os treinadores já têm conta!</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- 3C. CAMPOS EXCLUSIVOS: ASSOCIAR SÓCIO -->
+                <div id="dados_socio_existente" style="display: none;" class="mb-4">
+                    <h5 class="fw-bold mb-3 border-bottom pb-2 text-success">Escolher Sócio</h5>
+                    <select name="socio_id" id="input_socio_id" class="form-select">
+                        <option value="" selected disabled>-- Seleciona o Sócio --</option>
+                        {% for socio in socios_sem_conta %}
+                            <option value="{{ socio.id }}">{{ socio.nome }} ({{ socio.email }})</option>
+                        {% empty %}
+                            <option value="" disabled>Todos os sócios já têm conta!</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- 3D. CAMPOS EXCLUSIVOS: APAGAR UTILIZADOR -->
+                <div id="dados_apagar_utilizador" style="display: none;" class="mb-4">
+                    <h5 class="fw-bold mb-3 border-bottom pb-2 text-danger">Escolher Utilizador a Apagar</h5>
+                    <div class="alert alert-warning small mb-3">
+                        <i class="bi bi-exclamation-triangle-fill me-1"></i> Atenção: Esta ação apaga as credenciais de login. A ficha de sócio/treinador manter-se-á na base de dados, mas ficará sem acesso.
+                    </div>
+                    <select name="user_id" id="input_user_id" class="form-select">
+                        <option value="" selected disabled>-- Seleciona o Utilizador --</option>
+                        {% for u in utilizadores_comuns %}
+                            <option value="{{ u.id }}">{{ u.username }} {% if u.email %}({{ u.email }}){% endif %}</option>
+                        {% empty %}
+                            <option value="" disabled>Não há utilizadores comuns registados.</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <button type="submit" id="btn_submit" class="btn btn-dark w-100 fw-bold py-2 shadow-sm" style="display: none;">Criar Acesso</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function mudarFormulario() {
+        const opcao = document.getElementById('tipo_conta').value;
+        const btnSubmit = document.getElementById('btn_submit');
+        
+        // Esconder tudo primeiro
+        document.getElementById('dados_login').style.display = 'none';
+        document.getElementById('dados_novo_treinador').style.display = 'none';
+        document.getElementById('dados_treinador_existente').style.display = 'none';
+        document.getElementById('dados_socio_existente').style.display = 'none';
+        document.getElementById('dados_apagar_utilizador').style.display = 'none';
+        btnSubmit.style.display = 'block';
+        
+        // Retirar a obrigatoriedade de todos os campos ocultos
+        document.getElementById('input_username').required = false;
+        document.getElementById('input_password').required = false;
+        document.getElementById('input_nome_treinador').required = false;
+        document.getElementById('input_treinador_id').required = false;
+        document.getElementById('input_socio_id').required = false;
+        document.getElementById('input_user_id').required = false;
+
+        // Resetar o estilo do botão para o padrão
+        btnSubmit.className = "btn btn-dark w-100 fw-bold py-2 shadow-sm";
+        btnSubmit.innerHTML = "Submeter";
+
+        // Lógica de visualização
+        if (opcao === 'apagar_utilizador') {
+            document.getElementById('dados_apagar_utilizador').style.display = 'block';
+            document.getElementById('input_user_id').required = true;
+            // Botão muda para vermelho!
+            btnSubmit.className = "btn btn-danger w-100 fw-bold py-2 shadow-sm";
+            btnSubmit.innerHTML = "Apagar Conta Definitivamente";
+        } else {
+            // Para as opções de Criação, mostramos sempre a zona de Login
+            document.getElementById('dados_login').style.display = 'block';
+            document.getElementById('input_username').required = true;
+            document.getElementById('input_password').required = true;
+            btnSubmit.innerHTML = "Criar Acesso";
+
+            if (opcao === 'treinador_novo') {
+                document.getElementById('dados_novo_treinador').style.display = 'block';
+                document.getElementById('input_nome_treinador').required = true;
+            } else if (opcao === 'treinador_existente') {
+                document.getElementById('dados_treinador_existente').style.display = 'block';
+                document.getElementById('input_treinador_id').required = true;
+            } else if (opcao === 'socio_existente') {
+                document.getElementById('dados_socio_existente').style.display = 'block';
+                document.getElementById('input_socio_id').required = true;
+            }
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalhe do Exercício</title>
+</head>
+<body>
+    <h1>Exercício: {{ exercicio.nomeExercicio }}</h1>
+    <a href="{% url 'planotreino_detail' exercicio.planoTreino.pk %}">Voltar ao Plano de Treino</a>
+    <hr>
+    
+    <p><strong>Faz parte do Plano:</strong> {{ exercicio.planoTreino.nomePlano }}</p>
+    <p><strong>Nº de Séries:</strong> {{ exercicio.series }}</p>
+    <p><strong>Nº de Repetições por série:</strong> {{ exercicio.repeticoes }}</p>
+    
+    {% if exercicio.gif_url %}
+        <p><strong>Demonstração (URL):</strong> <a href="{{ exercicio.gif_url }}" target="_blank">Ver GIF</a></p>
+    {% endif %}
+</body>
+</html>

@@ -1,0 +1,55 @@
+{% extends 'ginasio/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Registar Novo Pagamento</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{% url 'pagamento_list' %}" class="btn btn-secondary">Cancelar</a>
+                            <button type="submit" class="btn btn-success">Guardar Pagamento</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- O resto do teu formulário está acima disto -->
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const frequenciaSelect = document.getElementById('id_frequencia');
+        const descritivoInput = document.getElementById('id_descritivo');
+        
+        // Função para mostrar/esconder
+        function toggleDescritivo() {
+            // O '.closest("div")' apanha a div que envolve a label e o input para esconder tudo
+            const descritivoDiv = descritivoInput.closest("p") || descritivoInput.closest("div");
+            
+            if (frequenciaSelect.value === 'Unico') {
+                descritivoDiv.style.display = 'block';
+            } else {
+                descritivoDiv.style.display = 'none';
+                descritivoInput.value = ''; // Limpa o texto se mudar para mensalidade
+            }
+        }
+
+        // Corre ao abrir a página
+        toggleDescritivo();
+        
+        // Corre sempre que mudas a dropdown da Frequência
+        frequenciaSelect.addEventListener('change', toggleDescritivo);
+    });
+</script>
+
+{% endblock %}

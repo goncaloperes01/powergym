@@ -1,0 +1,168 @@
+{% extends 'ginasio/base.html' %}
+
+{% block title %}Dashboard - PowerGym{% endblock %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+    
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+        <div>
+            <h2 class="fw-bold mb-0"><i class="bi bi-speedometer2 text-primary me-2"></i>Dashboard de Gestão</h2>
+            <p class="text-muted mb-0">Visão Geral e Estatísticas do PowerGym</p>
+        </div>
+        <div>
+            <span class="badge bg-dark fs-6 py-2 px-3 rounded-pill shadow-sm">
+                <i class="bi bi-calendar3 me-2"></i> Hoje, {% now "d M Y" %}
+            </span>
+        </div>
+    </div>
+
+    <!-- Linha 1: Cartões de Resumo Rápidos -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary border-0 rounded-4 shadow-sm h-100">
+                <div class="card-body p-4 d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-uppercase fw-bold opacity-75 mb-1">Sócios Ativos</h6>
+                        <h2 class="fw-bold mb-0">{{ num_socios }}</h2>
+                    </div>
+                    <i class="bi bi-people-fill fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success border-0 rounded-4 shadow-sm h-100">
+                <div class="card-body p-4 d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-uppercase fw-bold opacity-75 mb-1">Inscrições em Aulas</h6>
+                        <h2 class="fw-bold mb-0">{{ num_inscricoes }}</h2>
+                    </div>
+                    <i class="bi bi-calendar-check-fill fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-info border-0 rounded-4 shadow-sm h-100">
+                <div class="card-body p-4 d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-uppercase fw-bold opacity-75 mb-1">Total de Aulas</h6>
+                        <h2 class="fw-bold mb-0">{{ num_aulas }}</h2>
+                    </div>
+                    <i class="bi bi-activity fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-dark border-0 rounded-4 shadow-sm h-100">
+                <div class="card-body p-4 d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-uppercase fw-bold opacity-75 mb-1">Treinadores</h6>
+                        <h2 class="fw-bold mb-0">{{ num_treinadores }}</h2>
+                    </div>
+                    <i class="bi bi-person-badge-fill fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Linha 2: Os Novos Gráficos -->
+    <div class="row g-4 mb-4">
+        
+        <!-- Gráfico Circular: Finanças -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 h-100 rounded-4">
+                <div class="card-header bg-white border-0 pt-4 pb-0 px-4">
+                    <h5 class="fw-bold text-dark"><i class="bi bi-pie-chart-fill text-warning me-2"></i>Estado das Finanças</h5>
+                </div>
+                <div class="card-body d-flex justify-content-center align-items-center p-4">
+                    {% if num_pagamentos > 0 %}
+                        <!-- Onde o Gráfico Circular vai ser desenhado -->
+                        <canvas id="graficoFinancas" style="max-height: 280px;"></canvas>
+                    {% else %}
+                        <div class="text-center text-muted">
+                            <i class="bi bi-wallet2 fs-1 opacity-25 d-block mb-2"></i>
+                            Ainda não existem faturas para gerar o gráfico.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráfico de Barras: Métricas Gerais -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 h-100 rounded-4">
+                <div class="card-header bg-white border-0 pt-4 pb-0 px-4">
+                    <h5 class="fw-bold text-dark"><i class="bi bi-bar-chart-fill text-info me-2"></i>Volume do Ginásio</h5>
+                </div>
+                <div class="card-body p-4">
+                    <!-- Onde o Gráfico de Barras vai ser desenhado -->
+                    <canvas id="graficoVolume" style="max-height: 280px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- IMPORTAR A BIBLIOTECA CHART.JS -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- MAGIA DOS GRÁFICOS (JavaScript) -->
+<script>
+    // 1. Configurar o Gráfico Circular (Finanças)
+    const ctxFinancas = document.getElementById('graficoFinancas');
+    if (ctxFinancas) {
+        new Chart(ctxFinancas, {
+            type: 'doughnut',
+            data: {
+                labels: ['Faturas Pagas', 'Pendentes', 'Atrasadas'],
+                datasets: [{
+                    // O Python injeta aqui os números reais!
+                    data: [{{ num_pagos }}, {{ num_pendentes }}, {{ num_atrasados }}],
+                    backgroundColor: [
+                        '#198754', // Verde para Pagos
+                        '#ffc107', // Amarelo para Pendentes
+                        '#dc3545'  // Vermelho para Atrasados
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+    }
+
+    // 2. Configurar o Gráfico de Barras (Volume)
+    const ctxVolume = document.getElementById('graficoVolume').getContext('2d');
+    new Chart(ctxVolume, {
+        type: 'bar',
+        data: {
+            labels: ['Sócios Ativos', 'Planos de Treino', 'Modalidades', 'Exercícios Criados'],
+            datasets: [{
+                label: 'Quantidade',
+                // O Python injeta aqui as contagens gerais da BD
+                data: [{{ num_socios }}, {{ num_planos }}, {{ num_modalidades }}, {{ num_exercicios }}],
+                backgroundColor: '#0d6efd', // Azul principal
+                borderRadius: 8, // Bordas arredondadas nas barras
+                barPercentage: 0.6
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false } // Esconder a legenda porque só há 1 cor
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { precision: 0 } // Para não mostrar casas decimais nas contagens
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

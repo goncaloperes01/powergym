@@ -1,0 +1,66 @@
+{% extends 'ginasio/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Histórico de Pagamentos</h2>
+        <a href="{% url 'pagamento_create' %}" class="btn btn-primary">+ Registar Pagamento</a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Sócio</th>
+                        <th>Valor</th>
+                        <th>Data de Pagamento</th>
+                        <th>Estado</th>
+                        <th>Tipo / Descrição</th> <!-- Coluna movida para o sítio certo -->
+                        <th class="text-end">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pagamento in pagamentos %}
+                    <tr>
+                        <td class="fw-bold">{{ pagamento.socio.nome }}</td>
+                        <td>{{ pagamento.valor|floatformat:2 }} €</td>
+                        <!-- Adicionei um default para mostrar um traço caso o pagamento ainda esteja Pendente e não tenha data de pagamento -->
+                        <td>{{ pagamento.data_pago|date:"d/m/Y"|default:"-" }}</td>
+                        <td>
+                            {% if pagamento.estado == 'Liquidado' %}
+                                <span class="badge bg-success">Liquidado</span>
+                            {% elif pagamento.estado == 'Atrasado' %}
+                                <span class="badge bg-danger">Atrasado</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">Pendente</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <!-- Lógica para mostrar se é Mensalidade ou mostrar o Descritivo -->
+                            {% if pagamento.frequencia == 'Mensal' %}
+                                <span class="text-muted">Mensalidade</span>
+                            {% else %}
+                                <strong>{{ pagamento.descritivo|default:"-" }}</strong>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            <a href="{% url 'pagamento_detail' pagamento.pk %}" class="btn btn-sm btn-outline-info">Ver</a>
+                            <a href="{% url 'pagamento_update' pagamento.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
+                            <a href="{% url 'pagamento_delete' pagamento.pk %}" class="btn btn-sm btn-outline-danger">Apagar</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <!-- Colspan alterado para 6 devido à nova coluna -->
+                        <td colspan="6" class="text-center py-4 text-muted">
+                            Ainda não existem pagamentos registados.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

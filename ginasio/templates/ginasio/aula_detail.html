@@ -1,0 +1,108 @@
+{% extends 'ginasio/base.html' %}
+
+{% block title %}Detalhes da Aula - PowerGym{% endblock %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+    
+    <!-- Cabeçalho e Botões -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+        <div>
+            <h2 class="fw-bold mb-0">Informação da Aula</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="{% url 'aula_list' %}" class="text-decoration-none">Agenda</a></li>
+                    <li class="breadcrumb-item active">{{ aula.modalidade }} ({{ aula.data|date:"d/m" }})</li>
+                </ol>
+            </nav>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{% url 'aula_list' %}" class="btn btn-outline-secondary">Voltar à Agenda</a>
+            <a href="{% url 'aula_update' aula.pk %}" class="btn btn-warning fw-bold text-dark">Editar Horário</a>
+            <a href="{% url 'aula_delete' aula.pk %}" class="btn btn-danger fw-bold">Apagar</a>
+        </div>
+    </div>
+
+    <!-- O Cartão Principal (Aquele que já tinhas) -->
+    <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
+        <div class="bg-dark text-white p-4 d-flex justify-content-between align-items-center">
+            <div>
+                <h3 class="fw-bold mb-1">{{ aula.modalidade }}</h3>
+                <p class="mb-0 text-white-50">Orientado por: {{ aula.treinador }}</p>
+            </div>
+            <div class="text-end">
+                <h3 class="fw-bold text-info mb-0">{{ aula.hora|time:"H:i" }}</h3>
+                <p class="mb-0 text-white-50">{{ aula.data|date:"d M Y" }}</p>
+            </div>
+        </div>
+        
+        <div class="card-body p-4">
+            <div class="row text-center mb-4">
+                <div class="col-4 border-end">
+                    <small class="text-muted fw-bold d-block mb-1 text-uppercase">Localização</small>
+                    <span class="fs-5 fw-bold text-dark">Estúdio Principal</span>
+                </div>
+                <div class="col-4 border-end">
+                    <small class="text-muted fw-bold d-block mb-1 text-uppercase">Intensidade</small>
+                    <span class="fs-5 fw-bold text-dark">Média</span>
+                </div>
+                <div class="col-4">
+                    <small class="text-muted fw-bold d-block mb-1 text-uppercase">Lotação Máx.</small>
+                    <span class="fs-5 fw-bold text-primary">10 Pessoas</span>
+                </div>
+            </div>
+
+            <div class="bg-light p-4 rounded-4 d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="fw-bold mb-1">Deseja inscrever um sócio?</h6>
+                    <p class="text-muted small mb-0">Registe os participantes para esta sessão.</p>
+                </div>
+                <a href="{% url 'inscricao_create' %}" class="btn btn-dark px-4 fw-bold shadow-sm">Registar Inscrição</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOVIDADE: A TABELA DE SÓCIOS INSCRITOS NESTA AULA -->
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-header bg-white border-0 pt-4 pb-3 px-4 d-flex justify-content-between align-items-center border-bottom">
+            <h5 class="fw-bold mb-0"><i class="bi bi-people-fill text-primary me-2"></i>Lista de Inscritos</h5>
+            <!-- Mostra a contagem de pessoas face à lotação -->
+            <span class="badge bg-primary rounded-pill fs-6 px-3 py-2">{{ inscricoes.count }} / 10 Vagas</span>
+        </div>
+        
+        <div class="card-body p-0">
+            {% if inscricoes %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-4">Sócio</th>
+                                <th>Data da Inscrição</th>
+                                <th class="text-end pe-4">Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for inscricao in inscricoes %}
+                            <tr>
+                                <td class="ps-4 fw-bold text-dark">{{ inscricao.socio.nome }}</td>
+                                <td class="text-muted">{{ inscricao.dataRegisto|date:"d/m/Y" }}</td>
+                                <td class="text-end pe-4">
+                                    <!-- Permite remover o aluno diretamente daqui! -->
+                                    <a href="{% url 'inscricao_delete' inscricao.pk %}" class="btn btn-sm btn-outline-danger rounded-pill px-3">Remover</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-5 text-muted">
+                    <i class="bi bi-emoji-frown fs-1 opacity-25 d-block mb-3"></i>
+                    Ainda não há nenhum sócio inscrito nesta aula.<br>Usa o botão acima para registar o primeiro!
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+</div>
+{% endblock %}
