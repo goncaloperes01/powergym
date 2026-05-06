@@ -93,7 +93,6 @@ USE_TZ = True
 STATIC_URL = '/static/'  # <- Adicionada a barra no início
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage' # <- Linha Nova
 
 # Pasta das Imagens (Media)
 MEDIA_URL = '/media/'
@@ -118,4 +117,12 @@ CLOUDINARY_STORAGE = {
     'API_SECRET': 'CvquxV9CQxTtT91QuPPik1z2CgQ',
 }
 
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+# Configuração Unificada de Armazenamento (Django 4.2+)
+STORAGES = {
+    "default": {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
