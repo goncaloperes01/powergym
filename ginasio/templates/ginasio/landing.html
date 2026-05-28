@@ -4,148 +4,568 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PowerGym - O Teu Ginásio de Excelência</title>
-    
-    <!-- PACK COMPLETO DE FAVICONS (PC e Mobile) -->
+    <meta name="description" content="PowerGym, plataforma de ginásio com inscrições online, aulas, planos de treino e acompanhamento personalizado.">
+    <title>PowerGym - Ginásio e Treino Personalizado</title>
+
     <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/apple-touch-icon.png' %}">
     <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon-32x32.png' %}">
     <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon-16x16.png' %}">
     <link rel="manifest" href="{% static 'images/site.webmanifest' %}">
     <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}">
 
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
     <style>
-        .hero-section {
-            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop') no-repeat center center;
-            background-size: cover;
-            color: white;
-            padding: 150px 0;
+        :root {
+            --pg-ink: #111827;
+            --pg-muted: #64748b;
+            --pg-line: #e2e8f0;
+            --pg-panel: #ffffff;
+            --pg-soft: #f8fafc;
+            --pg-orange: #f97316;
+            --pg-amber: #facc15;
+            --pg-blue: #2563eb;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            color: var(--pg-ink);
+            background: var(--pg-soft);
+            font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        .landing-nav {
+            background: rgba(17, 24, 39, 0.96);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+        }
+
+        .brand-logo {
+            width: 52px;
+            height: 52px;
+            object-fit: cover;
+            border: 2px solid var(--pg-orange);
+            background: #0f172a;
+        }
+
+        .nav-link-public {
+            color: rgba(255, 255, 255, 0.78);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .nav-link-public:hover,
+        .nav-link-public:focus {
+            color: #ffffff;
+        }
+
+        .hero {
+            min-height: calc(100vh - 78px);
+            color: #ffffff;
+            background:
+                linear-gradient(90deg, rgba(8, 13, 23, 0.94) 0%, rgba(8, 13, 23, 0.78) 44%, rgba(8, 13, 23, 0.22) 100%),
+                url("https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1800&auto=format&fit=crop") center / cover no-repeat;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            inset: auto 0 0;
+            height: 120px;
+            background: linear-gradient(180deg, rgba(248, 250, 252, 0), var(--pg-soft));
+            pointer-events: none;
+        }
+
+        .hero-inner {
+            position: relative;
+            z-index: 1;
+            padding-top: 72px;
+            padding-bottom: 96px;
+        }
+
+        .hero-kicker {
+            color: var(--pg-amber);
+            font-size: 0.82rem;
+            font-weight: 800;
+            letter-spacing: 0;
+            text-transform: uppercase;
+        }
+
+        .hero-title {
+            max-width: 760px;
+            margin: 18px 0;
+            font-size: clamp(2.55rem, 5.8vw, 5.35rem);
+            line-height: 0.96;
+            font-weight: 900;
+        }
+
+        .hero-copy {
+            max-width: 620px;
+            color: rgba(255, 255, 255, 0.82);
+            font-size: 1.18rem;
+            line-height: 1.65;
+        }
+
+        .btn-power {
+            --bs-btn-bg: var(--pg-orange);
+            --bs-btn-border-color: var(--pg-orange);
+            --bs-btn-hover-bg: #ea580c;
+            --bs-btn-hover-border-color: #ea580c;
+            --bs-btn-color: #ffffff;
+            --bs-btn-hover-color: #ffffff;
+            border-radius: 8px;
+            font-weight: 800;
+            padding: 0.88rem 1.2rem;
+        }
+
+        .btn-ghost {
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.34);
+            border-radius: 8px;
+            font-weight: 700;
+            padding: 0.88rem 1.2rem;
+        }
+
+        .btn-ghost:hover,
+        .btn-ghost:focus {
+            color: #111827;
+            background: #ffffff;
+            border-color: #ffffff;
+        }
+
+        .metric-strip {
+            transform: translateY(-52px);
+            position: relative;
+            z-index: 2;
+        }
+
+        .metric-panel,
+        .feature-panel,
+        .class-card,
+        .trainer-card,
+        .member-panel {
+            background: var(--pg-panel);
+            border: 1px solid var(--pg-line);
+            border-radius: 8px;
+            box-shadow: 0 16px 36px rgba(15, 23, 42, 0.08);
+        }
+
+        .metric-panel {
+            padding: 24px;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 900;
+            line-height: 1;
+        }
+
+        .metric-label {
+            color: var(--pg-muted);
+            font-size: 0.94rem;
+        }
+
+        .section-pad {
+            padding: 44px 0 84px;
+        }
+
+        .section-eyebrow {
+            color: var(--pg-blue);
+            font-weight: 800;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .section-title {
+            font-weight: 900;
+            line-height: 1.08;
+            margin: 8px 0 14px;
+        }
+
+        .section-copy {
+            color: var(--pg-muted);
+            max-width: 680px;
+            line-height: 1.65;
+        }
+
+        .feature-panel {
+            height: 100%;
+            padding: 26px;
+        }
+
+        .feature-icon {
+            width: 46px;
+            height: 46px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            background: var(--pg-ink);
+            border-radius: 8px;
+            font-size: 1.35rem;
+            margin-bottom: 18px;
+        }
+
+        .class-card {
+            height: 100%;
+            padding: 24px;
+        }
+
+        .intensity-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #7c2d12;
+            background: #ffedd5;
+            border: 1px solid #fed7aa;
+            border-radius: 999px;
+            font-size: 0.82rem;
+            font-weight: 800;
+            padding: 0.42rem 0.7rem;
+        }
+
+        .trainer-card {
+            height: 100%;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .trainer-photo {
+            width: 112px;
+            height: 112px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 4px solid #ffffff;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.14);
+            background: #e2e8f0;
+        }
+
+        .trainer-placeholder {
+            width: 112px;
+            height: 112px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            color: var(--pg-muted);
+            background: #e2e8f0;
+            border: 4px solid #ffffff;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.14);
+            font-size: 2.3rem;
+        }
+
+        .member-band {
+            color: #ffffff;
+            background: linear-gradient(135deg, #111827 0%, #172033 58%, #7c2d12 100%);
+        }
+
+        .member-panel {
+            color: var(--pg-ink);
+            padding: 28px;
+            box-shadow: none;
+        }
+
+        .check-row {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            color: var(--pg-muted);
+            margin-bottom: 14px;
+        }
+
+        .check-row i {
+            color: #16a34a;
+            margin-top: 2px;
+        }
+
+        .footer {
+            background: #0f172a;
+            color: rgba(255, 255, 255, 0.72);
+        }
+
+        @media (max-width: 767.98px) {
+            .hero {
+                min-height: auto;
+                background:
+                    linear-gradient(180deg, rgba(8, 13, 23, 0.96) 0%, rgba(8, 13, 23, 0.76) 100%),
+                    url("https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1200&auto=format&fit=crop") center / cover no-repeat;
+            }
+
+            .hero-inner {
+                padding-top: 54px;
+                padding-bottom: 94px;
+            }
+
+            .hero-title {
+                font-size: 2.75rem;
+            }
+
+            .metric-strip {
+                transform: translateY(-36px);
+            }
+
+            .section-pad {
+                padding: 28px 0 64px;
+            }
         }
     </style>
 </head>
 <body>
-
-    <!-- Menu Público de Navegação -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-3">
+    <nav class="navbar navbar-expand-lg landing-nav py-3">
         <div class="container">
-            <!-- Logótipo com a imagem em vez de texto -->
-            <a class="navbar-brand" href="{% url 'landing' %}">
-                <img src="{% static 'images/logo.png' %}" alt="Power Gym Logo" class="rounded-circle shadow-sm" style="width: 50px; height: 50px; object-fit: cover; border: 2px solid #ffc107;">
+            <a class="navbar-brand d-flex align-items-center gap-3" href="{% url 'landing' %}" aria-label="PowerGym">
+                <img src="{% static 'images/logo.png' %}" alt="PowerGym" class="brand-logo rounded-circle">
+                <span class="text-white fw-black fw-bold">PowerGym</span>
             </a>
-            
-            <div class="ms-auto d-flex gap-2 align-items-center">
+
+            <div class="ms-auto d-flex flex-wrap gap-2 align-items-center justify-content-end">
                 {% if request.user.is_authenticated %}
                     {% if request.user.is_superuser %}
-                        <a href="{% url 'index' %}" class="btn btn-outline-light">Ir para Dashboard</a>
+                        <a href="{% url 'index' %}" class="btn btn-sm btn-outline-light">Dashboard</a>
                     {% else %}
-                        <a href="{% url 'perfil_cliente' %}" class="btn btn-outline-light">A Minha Conta</a>
+                        <a href="{% url 'perfil_cliente' %}" class="btn btn-sm btn-outline-light">A Minha Conta</a>
                     {% endif %}
-                    
-                    <!-- Novo Botão de Sair -->
                     <form action="{% url 'logout' %}" method="post" class="m-0">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-danger fw-bold">Sair</button>
+                        <button type="submit" class="btn btn-sm btn-power">Sair</button>
                     </form>
-
                 {% else %}
-                    <a href="{% url 'login' %}" class="btn btn-outline-light">Login</a>
-                    <a href="{% url 'registo_socio' %}" class="btn btn-warning fw-bold">Tornar-me Sócio</a>
+                    <a href="{% url 'login' %}" class="nav-link-public px-2">Login</a>
+                    <a href="{% url 'registo_socio' %}" class="btn btn-sm btn-power">Tornar-me Sócio</a>
                 {% endif %}
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section (Banner Principal) -->
-    <header class="hero-section text-center">
-        <div class="container">
-            <h1 class="display-3 fw-bold mb-4">Supera os teus limites.</h1>
-            <p class="lead fs-4 mb-5">Instalações premium, acompanhamento personalizado e a melhor comunidade fitness.</p>
-            {% if not request.user.is_authenticated %}
-                <a href="{% url 'registo_socio' %}" class="btn btn-warning btn-lg px-5 py-3 fw-bold rounded-pill shadow">Começa Hoje Mesmo</a>
-            {% endif %}
+    <header class="hero">
+        <div class="container hero-inner">
+            <div class="hero-kicker">Treino, aulas e gestão num só lugar</div>
+            <h1 class="hero-title">PowerGym</h1>
+            <p class="hero-copy">
+                Entra num ginásio preparado para acompanhar o teu progresso: inscrição online,
+                planos de treino, aulas organizadas, pagamentos controlados e uma equipa focada
+                em resultados reais.
+            </p>
+            <div class="d-flex flex-column flex-sm-row gap-3 mt-4">
+                {% if request.user.is_authenticated %}
+                    <a href="{% url 'redirecionar_login' %}" class="btn btn-power btn-lg">
+                        <i class="bi bi-speedometer2 me-2"></i>Entrar na área pessoal
+                    </a>
+                {% else %}
+                    <a href="{% url 'registo_socio' %}" class="btn btn-power btn-lg">
+                        <i class="bi bi-person-plus-fill me-2"></i>Começar agora
+                    </a>
+                    <a href="{% url 'login' %}" class="btn btn-ghost btn-lg">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Já sou sócio
+                    </a>
+                {% endif %}
+            </div>
         </div>
     </header>
 
-    <!-- Secção Dinâmica: Modalidades (Vem da BD) -->
-    <section class="py-5 bg-light">
-        <div class="container py-4">
-            <div class="text-center mb-5">
-                <h2 class="fw-bold">As Nossas Modalidades</h2>
-                <p class="text-muted">Treinos adaptados aos teus objetivos.</p>
-            </div>
-            <div class="row g-4">
-                {% for modalidade in modalidades %}
-                <div class="col-md-4">
-                    <div class="card h-100 border-0 shadow-sm text-center p-4 rounded-4">
-                        <i class="bi bi-activity fs-1 text-primary mb-3"></i>
-                        <h4 class="fw-bold">{{ modalidade.nome }}</h4>
-                        <p class="text-muted small">Junta-te às nossas turmas e sente a energia de um treino focado em resultados.</p>
+    <main>
+        <section class="metric-strip">
+            <div class="container">
+                <div class="metric-panel">
+                    <div class="row g-4">
+                        <div class="col-6 col-lg-3">
+                            <div class="metric-value">{{ total_socios|default:0 }}</div>
+                            <div class="metric-label">sócios registados</div>
+                        </div>
+                        <div class="col-6 col-lg-3">
+                            <div class="metric-value">{{ total_modalidades|default:0 }}</div>
+                            <div class="metric-label">modalidades ativas</div>
+                        </div>
+                        <div class="col-6 col-lg-3">
+                            <div class="metric-value">{{ total_treinadores|default:0 }}</div>
+                            <div class="metric-label">treinadores</div>
+                        </div>
+                        <div class="col-6 col-lg-3">
+                            <div class="metric-value">{{ total_aulas|default:0 }}</div>
+                            <div class="metric-label">aulas planeadas</div>
+                        </div>
                     </div>
                 </div>
-                {% empty %}
-                <div class="col-12 text-center text-muted">
-                    <p>Modalidades a ser atualizadas brevemente.</p>
-                </div>
-                {% endfor %}
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Secção Dinâmica: A Nossa Equipa (Atualizada com Fotos) -->
-<section class="py-5 bg-white">
-    <div class="container py-4">
-        <div class="text-center mb-5">
-            <h2 class="fw-bold">A Nossa Equipa</h2>
-            <p class="text-muted">Profissionais focados no teu sucesso.</p>
-        </div>
-        
-        <div class="row g-4 justify-content-center">
-            {% for treinador in treinadores %}
-            <div class="col-md-4 col-lg-3">
-                <div class="card h-100 border-0 shadow-sm text-center p-4 rounded-4 bg-light">
-                    
-                    <!-- Lógica de Fotografia do Treinador -->
-                    <div class="mb-3">
-                        {% if treinador.foto %}
-                            <img src="{{ treinador.foto.url }}" alt="{{ treinador.nome }}" 
-                                 class="rounded-circle shadow-sm border border-3 border-white object-fit-cover" 
-                                 style="width: 110px; height: 110px;">
-                        {% else %}
-                            <div class="rounded-circle bg-white d-inline-flex align-items-center justify-content-center shadow-sm" 
-                                 style="width: 110px; height: 110px;">
-                                <i class="bi bi-person-badge fs-1 text-secondary"></i>
+        <section class="section-pad">
+            <div class="container">
+                <div class="row align-items-end mb-4">
+                    <div class="col-lg-8">
+                        <div class="section-eyebrow">Experiência completa</div>
+                        <h2 class="section-title display-6">Mais do que uma landing page bonita.</h2>
+                        <p class="section-copy mb-0">
+                            O PowerGym liga o site público a uma área de cliente e a um painel de gestão,
+                            para que a experiência comece no registo e continue no acompanhamento diário.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-md-6 col-lg-3">
+                        <div class="feature-panel">
+                            <div class="feature-icon"><i class="bi bi-calendar2-check"></i></div>
+                            <h3 class="h5 fw-bold">Aulas e inscrições</h3>
+                            <p class="text-secondary mb-0">Consulta aulas disponíveis e gere inscrições de forma simples.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="feature-panel">
+                            <div class="feature-icon"><i class="bi bi-clipboard2-pulse"></i></div>
+                            <h3 class="h5 fw-bold">Planos de treino</h3>
+                            <p class="text-secondary mb-0">Organiza objetivos, exercícios, séries e descansos por sócio.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="feature-panel">
+                            <div class="feature-icon"><i class="bi bi-credit-card-2-front"></i></div>
+                            <h3 class="h5 fw-bold">Pagamentos</h3>
+                            <p class="text-secondary mb-0">Acompanha mensalidades, estados pendentes e pagamentos atrasados.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="feature-panel">
+                            <div class="feature-icon"><i class="bi bi-qr-code"></i></div>
+                            <h3 class="h5 fw-bold">Área de sócio</h3>
+                            <p class="text-secondary mb-0">Cada sócio tem perfil, aulas, faturas, plano e passe com QR Code.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-pad bg-white">
+            <div class="container">
+                <div class="row align-items-end mb-4">
+                    <div class="col-lg-8">
+                        <div class="section-eyebrow">Modalidades</div>
+                        <h2 class="section-title display-6">Escolhe o treino certo para ti.</h2>
+                        <p class="section-copy mb-0">As modalidades em destaque vêm diretamente da base de dados do projeto.</p>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    {% for modalidade in modalidades %}
+                        <div class="col-md-4">
+                            <article class="class-card">
+                                <span class="intensity-badge">
+                                    <i class="bi bi-lightning-charge-fill"></i>
+                                    {{ modalidade.intensidade|default:"Intensidade ajustável" }}
+                                </span>
+                                <h3 class="h4 fw-bold mt-4">{{ modalidade.nome }}</h3>
+                                <p class="text-secondary mb-0">
+                                    {{ modalidade.descricao|default:"Treino acompanhado pela equipa PowerGym, adaptado ao teu nível e ao teu objetivo." }}
+                                </p>
+                            </article>
+                        </div>
+                    {% empty %}
+                        <div class="col-12">
+                            <div class="class-card text-center">
+                                <i class="bi bi-activity fs-1 text-secondary d-block mb-3"></i>
+                                <h3 class="h5 fw-bold">Modalidades em preparação</h3>
+                                <p class="text-secondary mb-0">Assim que forem adicionadas no painel de gestão, aparecem aqui automaticamente.</p>
                             </div>
-                        {% endif %}
-                    </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
 
-                    <h4 class="fw-bold mb-1">{{ treinador.nome }}</h4>
-                    
-                    <div>
-                        <span class="badge bg-warning text-dark mx-auto mt-2 px-3 py-2 rounded-pill shadow-sm">
-                            {{ treinador.especialidade|default:"Personal Trainer" }}
-                        </span>
+        <section class="section-pad">
+            <div class="container">
+                <div class="row align-items-end mb-4">
+                    <div class="col-lg-8">
+                        <div class="section-eyebrow">Equipa</div>
+                        <h2 class="section-title display-6">Acompanhamento feito por pessoas reais.</h2>
+                        <p class="section-copy mb-0">Treinadores e especialidades também são carregados da base de dados.</p>
+                    </div>
+                </div>
+
+                <div class="row g-4 justify-content-center">
+                    {% for treinador in treinadores %}
+                        <div class="col-md-4 col-lg-3">
+                            <article class="trainer-card">
+                                {% if treinador.foto %}
+                                    <img src="{{ treinador.foto.url }}" alt="{{ treinador.nome }}" class="trainer-photo mb-3">
+                                {% else %}
+                                    <div class="trainer-placeholder mb-3">
+                                        <i class="bi bi-person-badge"></i>
+                                    </div>
+                                {% endif %}
+                                <h3 class="h5 fw-bold mb-1">{{ treinador.nome }}</h3>
+                                <p class="text-secondary mb-0">{{ treinador.especialidade|default:"Personal Trainer" }}</p>
+                            </article>
+                        </div>
+                    {% empty %}
+                        <div class="col-12">
+                            <div class="trainer-card">
+                                <i class="bi bi-people fs-1 text-secondary d-block mb-3"></i>
+                            <h3 class="h5 fw-bold">Equipa em atualização</h3>
+                            <p class="text-secondary mb-0">Adiciona treinadores no painel e esta secção fica preenchida automaticamente.</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <section class="member-band section-pad">
+            <div class="container">
+                <div class="row g-4 align-items-center">
+                    <div class="col-lg-7">
+                        <div class="section-eyebrow text-warning">Área pessoal</div>
+                        <h2 class="section-title display-6">O sócio entra, acompanha e evolui.</h2>
+                        <p class="mb-0 text-white-50">
+                            A landing aponta para uma experiência funcional: registo, login, aulas,
+                            pagamentos, plano de treino e identificação por QR Code.
+                        </p>
+                    </div>
+                    <div class="col-lg-5">
+                        <div class="member-panel">
+                            <div class="check-row">
+                                <i class="bi bi-check-circle-fill"></i>
+                                <span>Registo de sócio com criação de conta.</span>
+                            </div>
+                            <div class="check-row">
+                                <i class="bi bi-check-circle-fill"></i>
+                                <span>Dashboard de cliente com informação pessoal.</span>
+                            </div>
+                            <div class="check-row">
+                                <i class="bi bi-check-circle-fill"></i>
+                                <span>Gestão administrativa para equipa, aulas e pagamentos.</span>
+                            </div>
+                            {% if not request.user.is_authenticated %}
+                                <a href="{% url 'registo_socio' %}" class="btn btn-power w-100 mt-2">
+                                    <i class="bi bi-person-plus-fill me-2"></i>Tornar-me sócio
+                                </a>
+                            {% else %}
+                                <a href="{% url 'redirecionar_login' %}" class="btn btn-power w-100 mt-2">
+                                    <i class="bi bi-speedometer2 me-2"></i>Ir para a minha área
+                                </a>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
-            {% empty %}
-            <div class="col-12 text-center text-muted py-5">
-                <i class="bi bi-people fs-1 opacity-25 d-block mb-3"></i>
-                <p>A nossa equipa está a crescer. Novidades brevemente!</p>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-</section>
+        </section>
+    </main>
 
-    <!-- Footer Simples -->
-    <footer class="bg-dark text-white py-4 text-center">
-        <div class="container">
-            <p class="mb-0 text-white-50">&copy; 2026 PowerGym. Todos os direitos reservados.</p>
+    <footer class="footer py-4">
+        <div class="container d-flex flex-column flex-md-row gap-2 justify-content-between align-items-md-center">
+            <span>&copy; 2026 PowerGym. Todos os direitos reservados.</span>
+            <span>powergym.site</span>
         </div>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

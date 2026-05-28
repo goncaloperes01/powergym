@@ -21,6 +21,10 @@ def landing_page(request):
     context = {
         'modalidades': modalidades_destaque,
         'treinadores': equipa_destaque,
+        'total_modalidades': Modalidade.objects.count(),
+        'total_treinadores': Treinador.objects.count(),
+        'total_socios': Socio.objects.count(),
+        'total_aulas': Aulas.objects.count(),
     }
     return render(request, 'ginasio/landing.html', context)
 
