@@ -138,9 +138,21 @@ cloudinary_url = os.environ.get('CLOUDINARY_URL', '')
 cloudinary_config = urlparse(cloudinary_url) if cloudinary_url else None
 
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME') or (cloudinary_config.hostname if cloudinary_config else ''),
-    'API_KEY': os.environ.get('CLOUDINARY_API_KEY') or (cloudinary_config.username if cloudinary_config else ''),
-    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET') or (cloudinary_config.password if cloudinary_config else ''),
+    'CLOUD_NAME': (
+        os.environ.get('CLOUDINARY_CLOUD_NAME')
+        or os.environ.get('CLOUD_NAME')
+        or (cloudinary_config.hostname if cloudinary_config else '')
+    ),
+    'API_KEY': (
+        os.environ.get('CLOUDINARY_API_KEY')
+        or os.environ.get('API_KEY')
+        or (cloudinary_config.username if cloudinary_config else '')
+    ),
+    'API_SECRET': (
+        os.environ.get('CLOUDINARY_API_SECRET')
+        or os.environ.get('API_SECRET')
+        or (cloudinary_config.password if cloudinary_config else '')
+    ),
 }
 
 # Usar o sistema padrão do Django para evitar erros de compressão
