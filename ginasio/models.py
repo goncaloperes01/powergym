@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 class Socio(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
     nome = models.CharField(max_length=100)
@@ -8,34 +9,31 @@ class Socio(models.Model):
     contacto = models.CharField(max_length=15, null=True, blank=True)
     dataNascimento = models.DateField(null=True, blank=True)
     dataAdesao = models.DateField(auto_now_add=True)
-    
-    # --- NOVO CAMPO DE FOTOGRAFIA ---
     foto = models.ImageField(upload_to='socios_fotos/', null=True, blank=True)
 
     def __str__(self):
         return self.nome
-    
+
+
 class Treinador(models.Model):
-    # LIGAÇÃO AO LOGIN (Novo)
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
-    
     nome = models.CharField(max_length=100)
     especialidade = models.CharField(max_length=100)
     biografia = models.TextField(blank=True, null=True)
-    
-    # FOTOGRAFIA DO TREINADOR (Novo)
     foto = models.ImageField(upload_to='fotos/', null=True, blank=True)
 
     def __str__(self):
         return f"{self.nome} ({self.especialidade})"
 
+
 class Modalidade(models.Model):
     nome = models.CharField(max_length=50)
     descricao = models.TextField(blank=True, null=True)
-    intensidade = models.CharField(max_length=20, blank=True, null=True, help_text="Ex: Baixa, Média, Alta")
+    intensidade = models.CharField(max_length=20, blank=True, null=True, help_text="Ex: Baixa, Media, Alta")
 
     def __str__(self):
         return self.nome
+
 
 class Aulas(models.Model):
     modalidade = models.ForeignKey(Modalidade, on_delete=models.CASCADE)
@@ -45,7 +43,8 @@ class Aulas(models.Model):
     lotacao = models.IntegerField()
 
     def __str__(self):
-        return f"{self.modalidade.nome} - {self.data} às {self.hora}"
+        return f"{self.modalidade.nome} - {self.data} as {self.hora}"
+
 
 class Inscricao(models.Model):
     socio = models.ForeignKey(Socio, on_delete=models.CASCADE)
@@ -54,6 +53,7 @@ class Inscricao(models.Model):
 
     def __str__(self):
         return f"{self.socio.nome} -> {self.aula.modalidade.nome}"
+
 
 class PlanoTreino(models.Model):
     socio = models.ForeignKey(Socio, on_delete=models.CASCADE)
@@ -64,6 +64,7 @@ class PlanoTreino(models.Model):
     def __str__(self):
         return f"Plano de {self.socio.nome} ({self.objetivo})"
 
+
 class Exercicio(models.Model):
     planoTreino = models.ForeignKey(PlanoTreino, on_delete=models.CASCADE)
     nome = models.CharField(max_length=50)
@@ -73,7 +74,8 @@ class Exercicio(models.Model):
 
     def __str__(self):
         return f"{self.nome} ({self.series}x{self.repeticoes})"
-    
+
+
 class Pagamento(models.Model):
     ESTADO_CHOICES = [
         ('Liquidado', 'Liquidado'),
@@ -81,31 +83,17 @@ class Pagamento(models.Model):
         ('Atrasado', 'Atrasado'),
     ]
     FREQUENCIA_CHOICES = [
-        ('Unico', 'Pagamento Único'),
+        ('Unico', 'Pagamento Unico'),
         ('Mensal', 'Mensalidade'),
     ]
 
     socio = models.ForeignKey(Socio, on_delete=models.CASCADE)
     valor = models.FloatField()
-    
-    # Adicionamos a data limite para pagar
     data_vencimento = models.DateField()
-    
-    # Opcional: A data em que pagou (pode estar vazia se estiver pendente)
-    data_pago = models.DateField(null=True, blank=True)
-    
+    data_pago = models.DateField()
     estado = models.CharField(max_length=50, choices=ESTADO_CHOICES, default='Pendente')
     frequencia = models.CharField(max_length=50, choices=FREQUENCIA_CHOICES, default='Mensal')
-    
     descritivo = models.CharField(max_length=25, blank=True, null=True)
 
     def __str__(self):
-        return f"{self.socio.nome} - {self.valor}€ ({self.estado})"
-
-    socio = models.ForeignKey(Socio, on_delete=models.CASCADE)
-    valor = models.FloatField()
-    data_pago = models.DateField()
-    estado = models.CharField(max_length=50, choices=ESTADO_CHOICES, default='Pendente')
-
-    def __str__(self):
-        return f"{self.socio.nome} - {self.valor}€ ({self.estado})"
+        return f"{self.socio.nome} - {self.valor} EUR ({self.estado})"

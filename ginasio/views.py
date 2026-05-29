@@ -6,10 +6,22 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
 from django.contrib import messages
+from functools import wraps
 
 import qrcode
 import base64
 from io import BytesIO
+
+
+def admin_required(view_func):
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect('login')
+        if not request.user.is_superuser:
+            return redirect('redirecionar_login')
+        return view_func(request, *args, **kwargs)
+    return wrapper
 
 def landing_page(request):
     """
@@ -63,15 +75,18 @@ def index(request):
     return render(request, 'ginasio/index.html', context)
 
 # --- SÓCIOS ---
+@admin_required
 def socio_list(request):
     socios = Socio.objects.all()
     return render(request, 'ginasio/socio_list.html', {'socios': socios})
 
+@admin_required
 def socio_detail(request, pk):
     socio = get_object_or_404(Socio, pk=pk)
     pagamentos_socio = Pagamento.objects.filter(socio=socio).order_by('-data_vencimento') # Corrigido para data_vencimento
     return render(request, 'ginasio/socio_detail.html', {'socio': socio, 'pagamentos': pagamentos_socio})
 
+@admin_required
 def socio_create(request):
     if request.method == 'POST':
         form = SocioForm(request.POST, request.FILES)
@@ -82,6 +97,7 @@ def socio_create(request):
         form = SocioForm()
     return render(request, 'ginasio/socio_form.html', {'form': form})
 
+@admin_required
 def socio_update(request, pk):
     socio = get_object_or_404(Socio, pk=pk)
     if request.method == 'POST':
@@ -93,6 +109,7 @@ def socio_update(request, pk):
         form = SocioForm(instance=socio)
     return render(request, 'ginasio/socio_form.html', {'form': form, 'socio': socio})
 
+@admin_required
 def socio_delete(request, pk):
     socio = get_object_or_404(Socio, pk=pk)
     if request.method == 'POST':
@@ -101,14 +118,17 @@ def socio_delete(request, pk):
     return render(request, 'ginasio/socio_confirm_delete.html', {'socio': socio})
 
 # --- TREINADORES ---
+@admin_required
 def treinador_list(request):
     treinadores = Treinador.objects.all()
     return render(request, 'ginasio/treinador_list.html', {'treinadores': treinadores})
 
+@admin_required
 def treinador_detail(request, pk):
     treinador = get_object_or_404(Treinador, pk=pk)
     return render(request, 'ginasio/treinador_detail.html', {'treinador': treinador})
 
+@admin_required
 def treinador_create(request):
     if request.method == 'POST':
         form = TreinadorForm(request.POST, request.FILES)
@@ -119,6 +139,7 @@ def treinador_create(request):
         form = TreinadorForm()
     return render(request, 'ginasio/treinador_form.html', {'form': form})
 
+@admin_required
 def treinador_update(request, pk):
     treinador = get_object_or_404(Treinador, pk=pk)
     if request.method == 'POST':
@@ -130,6 +151,7 @@ def treinador_update(request, pk):
         form = TreinadorForm(instance=treinador)
     return render(request, 'ginasio/treinador_form.html', {'form': form, 'treinador': treinador})
 
+@admin_required
 def treinador_delete(request, pk):
     treinador = get_object_or_404(Treinador, pk=pk)
     if request.method == 'POST':
@@ -138,14 +160,17 @@ def treinador_delete(request, pk):
     return render(request, 'ginasio/treinador_confirm_delete.html', {'treinador': treinador})
 
 # --- MODALIDADES ---
+@admin_required
 def modalidade_list(request):
     modalidades = Modalidade.objects.all()
     return render(request, 'ginasio/modalidade_list.html', {'modalidades': modalidades})
 
+@admin_required
 def modalidade_detail(request, pk):
     modalidade = get_object_or_404(Modalidade, pk=pk)
     return render(request, 'ginasio/modalidade_detail.html', {'modalidade': modalidade})
 
+@admin_required
 def modalidade_create(request):
     if request.method == 'POST':
         form = ModalidadeForm(request.POST)
@@ -156,6 +181,7 @@ def modalidade_create(request):
         form = ModalidadeForm()
     return render(request, 'ginasio/modalidade_form.html', {'form': form})
 
+@admin_required
 def modalidade_update(request, pk):
     modalidade = get_object_or_404(Modalidade, pk=pk)
     if request.method == 'POST':
@@ -167,6 +193,7 @@ def modalidade_update(request, pk):
         form = ModalidadeForm(instance=modalidade)
     return render(request, 'ginasio/modalidade_form.html', {'form': form, 'modalidade': modalidade})
 
+@admin_required
 def modalidade_delete(request, pk):
     modalidade = get_object_or_404(Modalidade, pk=pk)
     if request.method == 'POST':
@@ -175,10 +202,12 @@ def modalidade_delete(request, pk):
     return render(request, 'ginasio/modalidade_confirm_delete.html', {'modalidade': modalidade})
 
 # --- AULAS ---
+@admin_required
 def aula_list(request):
     aulas = Aulas.objects.all().order_by('data', 'hora')
     return render(request, 'ginasio/aula_list.html', {'aulas': aulas})
 
+@admin_required
 def aula_detail(request, pk):
     aula = get_object_or_404(Aulas, pk=pk)
     # MAGIA: Vamos buscar todas as inscrições que pertencem SÓ a esta aula!
@@ -189,6 +218,7 @@ def aula_detail(request, pk):
         'inscricoes': inscricoes_da_aula  # Enviamos a lista para o HTML
     })
 
+@admin_required
 def aula_create(request):
     if request.method == 'POST':
         form = AulasForm(request.POST)
@@ -199,6 +229,7 @@ def aula_create(request):
         form = AulasForm()
     return render(request, 'ginasio/aula_form.html', {'form': form})
 
+@admin_required
 def aula_update(request, pk):
     aula = get_object_or_404(Aulas, pk=pk)
     if request.method == 'POST':
@@ -210,6 +241,7 @@ def aula_update(request, pk):
         form = AulasForm(instance=aula)
     return render(request, 'ginasio/aula_form.html', {'form': form, 'aula': aula})
 
+@admin_required
 def aula_delete(request, pk):
     aula = get_object_or_404(Aulas, pk=pk)
     if request.method == 'POST':
@@ -218,14 +250,17 @@ def aula_delete(request, pk):
     return render(request, 'ginasio/aula_confirm_delete.html', {'aula': aula})
 
 # --- INSCRIÇÕES ---
+@admin_required
 def inscricao_list(request):
     inscricoes = Inscricao.objects.all().order_by('-dataRegisto')
     return render(request, 'ginasio/inscricao_list.html', {'inscricoes': inscricoes})
 
+@admin_required
 def inscricao_detail(request, pk):
     inscricao = get_object_or_404(Inscricao, pk=pk)
     return render(request, 'ginasio/inscricao_detail.html', {'inscricao': inscricao})
 
+@admin_required
 def inscricao_create(request):
     if request.method == 'POST':
         form = InscricaoForm(request.POST)
@@ -250,6 +285,7 @@ def inscricao_create(request):
         
     return render(request, 'ginasio/inscricao_form.html', {'form': form})
 
+@admin_required
 def inscricao_update(request, pk):
     inscricao = get_object_or_404(Inscricao, pk=pk)
     if request.method == 'POST':
@@ -261,8 +297,13 @@ def inscricao_update(request, pk):
         form = InscricaoForm(instance=inscricao)
     return render(request, 'ginasio/inscricao_form.html', {'form': form, 'inscricao': inscricao})
 
+@login_required
 def inscricao_delete(request, pk):
     inscricao = get_object_or_404(Inscricao, pk=pk)
+
+    if not request.user.is_superuser:
+        if not hasattr(request.user, 'socio') or inscricao.socio_id != request.user.socio.id:
+            return redirect('redirecionar_login')
     
     # Guardamos o ID da aula antes de a apagar, para sabermos para onde voltar
     aula_id = inscricao.aula.pk 
@@ -281,15 +322,18 @@ def inscricao_delete(request, pk):
     return render(request, 'ginasio/inscricao_confirm_delete.html', {'inscricao': inscricao})
 
 # --- PLANOS DE TREINO ---
+@admin_required
 def planotreino_list(request):
     planos = PlanoTreino.objects.all().order_by('-data_inicio')
     return render(request, 'ginasio/planotreino_list.html', {'planos': planos})
 
+@admin_required
 def planotreino_detail(request, pk):
     plano = get_object_or_404(PlanoTreino, pk=pk)
     exercicios_do_plano = Exercicio.objects.filter(planoTreino=plano)
     return render(request, 'ginasio/planotreino_detail.html', {'plano': plano, 'exercicios': exercicios_do_plano})
 
+@admin_required
 def planotreino_create(request):
     if request.method == 'POST':
         form = PlanoTreinoForm(request.POST)
@@ -300,6 +344,7 @@ def planotreino_create(request):
         form = PlanoTreinoForm()
     return render(request, 'ginasio/planotreino_form.html', {'form': form})
 
+@admin_required
 def planotreino_update(request, pk):
     plano = get_object_or_404(PlanoTreino, pk=pk)
     if request.method == 'POST':
@@ -311,6 +356,7 @@ def planotreino_update(request, pk):
         form = PlanoTreinoForm(instance=plano)
     return render(request, 'ginasio/planotreino_form.html', {'form': form, 'plano': plano})
 
+@admin_required
 def planotreino_delete(request, pk):
     plano = get_object_or_404(PlanoTreino, pk=pk)
     if request.method == 'POST':
@@ -319,14 +365,17 @@ def planotreino_delete(request, pk):
     return render(request, 'ginasio/planotreino_confirm_delete.html', {'plano': plano})
 
 # --- EXERCÍCIOS ---
+@admin_required
 def exercicio_list(request):
     exercicios = Exercicio.objects.all()
     return render(request, 'ginasio/exercicio_list.html', {'exercicios': exercicios})
 
+@admin_required
 def exercicio_detail(request, pk):
     exercicio = get_object_or_404(Exercicio, pk=pk)
     return render(request, 'ginasio/exercicio_detail.html', {'exercicio': exercicio})
 
+@admin_required
 def exercicio_create(request):
     if request.method == 'POST':
         form = ExercicioForm(request.POST)
@@ -341,6 +390,7 @@ def exercicio_create(request):
             form = ExercicioForm()
     return render(request, 'ginasio/exercicio_form.html', {'form': form})
 
+@admin_required
 def exercicio_update(request, pk):
     exercicio = get_object_or_404(Exercicio, pk=pk)
     if request.method == 'POST':
@@ -352,6 +402,7 @@ def exercicio_update(request, pk):
         form = ExercicioForm(instance=exercicio)
     return render(request, 'ginasio/exercicio_form.html', {'form': form, 'exercicio': exercicio})
 
+@admin_required
 def exercicio_delete(request, pk):
     exercicio = get_object_or_404(Exercicio, pk=pk)
     if request.method == 'POST':
@@ -361,16 +412,19 @@ def exercicio_delete(request, pk):
     return render(request, 'ginasio/exercicio_confirm_delete.html', {'exercicio': exercicio})
 
 # --- PAGAMENTOS ---
+@admin_required
 def pagamento_list(request):
     hoje = date.today()
     Pagamento.objects.filter(estado='Pendente', data_vencimento__lt=hoje).update(estado='Atrasado')
     pagamentos = Pagamento.objects.all().order_by('-data_vencimento')
     return render(request, 'ginasio/pagamento_list.html', {'pagamentos': pagamentos})
 
+@admin_required
 def pagamento_detail(request, pk):
     pagamento = get_object_or_404(Pagamento, pk=pk)
     return render(request, 'ginasio/pagamento_detail.html', {'pagamento': pagamento})
 
+@admin_required
 def pagamento_create(request):
     if request.method == 'POST':
         form = PagamentoForm(request.POST)
@@ -381,6 +435,7 @@ def pagamento_create(request):
         form = PagamentoForm()
     return render(request, 'ginasio/pagamento_form.html', {'form': form})
 
+@admin_required
 def pagamento_update(request, pk):
     pagamento = get_object_or_404(Pagamento, pk=pk)
     estado_anterior = pagamento.estado
@@ -407,6 +462,7 @@ def pagamento_update(request, pk):
     
     return render(request, 'ginasio/pagamento_form.html', {'form': form, 'pagamento': pagamento})
 
+@admin_required
 def pagamento_delete(request, pk):
     pagamento = get_object_or_404(Pagamento, pk=pk)
     if request.method == 'POST':

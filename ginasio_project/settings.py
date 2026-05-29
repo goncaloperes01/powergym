@@ -1,17 +1,40 @@
 import os
 from pathlib import Path
-import dj_database_url # Adiciona isto
+from urllib.parse import urlparse
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-YOUR_SECRET_KEY_HERE'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-dev-only-change-me')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'False').lower() in ('1', 'true', 'yes', 'on')
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.environ.get(
+        'ALLOWED_HOSTS',
+        'localhost,127.0.0.1,testserver,powergym.site,www.powergym.site,.onrender.com'
+    ).split(',')
+    if host.strip()
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in os.environ.get(
+        'CSRF_TRUSTED_ORIGINS',
+        'https://powergym.site,https://www.powergym.site'
+    ).split(',')
+    if origin.strip()
+]
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = os.environ.get('SECURE_SSL_REDIRECT', str(not DEBUG)).lower() in ('1', 'true', 'yes', 'on')
+SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', str(not DEBUG)).lower() in ('1', 'true', 'yes', 'on')
+CSRF_COOKIE_SECURE = os.environ.get('CSRF_COOKIE_SECURE', str(not DEBUG)).lower() in ('1', 'true', 'yes', 'on')
+SECURE_HSTS_SECONDS = int(os.environ.get('SECURE_HSTS_SECONDS', '31536000' if not DEBUG else '0'))
 
 # Application definition
 INSTALLED_APPS = [
@@ -62,7 +85,7 @@ WSGI_APPLICATION = 'ginasio_project.wsgi.application'
 DATABASES = {
     'default': dj_database_url.config(
         # COLA AQUI O TEU LINK DO NEON.TECH (ENTRE AS ASPAS)
-        default='postgresql://neondb_owner:npg_gRhyINn8k3Xt@ep-floral-band-ab9knw9i-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require',
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
         conn_max_age=600
     )
 }
@@ -111,10 +134,13 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Configuração do Cloudinary (Fotos)
+cloudinary_url = os.environ.get('CLOUDINARY_URL', '')
+cloudinary_config = urlparse(cloudinary_url) if cloudinary_url else None
+
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': 'dfoqhtuci',
-    'API_KEY': '853932941335875',
-    'API_SECRET': 'CvquxV9CQxTtT91QuPPik1z2CgQ',
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME') or (cloudinary_config.hostname if cloudinary_config else ''),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY') or (cloudinary_config.username if cloudinary_config else ''),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET') or (cloudinary_config.password if cloudinary_config else ''),
 }
 
 # Usar o sistema padrão do Django para evitar erros de compressão

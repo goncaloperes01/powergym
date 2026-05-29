@@ -1,0 +1,45 @@
+{% extends 'ginasio/base.html' %}
+
+{% block title %}Apagar Plano de Treino - PowerGym{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body p-5 text-center">
+                    <div class="mb-4">
+                        <i class="bi bi-exclamation-triangle text-danger" style="font-size: 4rem;"></i>
+                    </div>
+
+                    <h2 class="fw-bold mb-3">Tens a certeza?</h2>
+                    <p class="text-muted mb-4">
+                        Estás prestes a eliminar permanentemente o plano de treino de
+                        <strong class="text-dark">{{ plano.socio.nome }}</strong>
+                        com o objetivo <strong class="text-dark">{{ plano.objetivo }}</strong>.
+                        <br>Esta ação não pode ser desfeita.
+                    </p>
+
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                            <a href="{% url 'planotreino_detail' plano.pk %}" class="btn btn-light rounded-pill px-4 fw-bold">
+                                Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-danger rounded-pill px-4 fw-bold shadow-sm">
+                                Sim, Eliminar Plano
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="text-center mt-3">
+                <a href="{% url 'planotreino_list' %}" class="text-decoration-none text-muted small">
+                    <i class="bi bi-arrow-left"></i> Voltar à lista de planos
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
