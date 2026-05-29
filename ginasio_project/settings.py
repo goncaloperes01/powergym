@@ -157,6 +157,7 @@ CLOUDINARY_STORAGE = {
 
 # Usar o sistema padrão do Django para evitar erros de compressão
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+WHITENOISE_USE_FINDERS = True
 
 # Configuração Unificada de Armazenamento (Django 4.2+)
 STORAGES = {

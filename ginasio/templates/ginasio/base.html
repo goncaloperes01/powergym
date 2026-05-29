@@ -5,82 +5,280 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Sistema de Gestão - Ginásio{% endblock %}</title>
-    
-    <!-- Bootstrap -->
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <!-- O NOSSO FICHEIRO CSS EXTERNO -->
     <link href="{% static 'css/style.css' %}" rel="stylesheet">
-    
-    <!-- PACK COMPLETO DE FAVICONS (PC e Mobile) -->
+
     <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/apple-touch-icon.png' %}">
     <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon-32x32.png' %}">
     <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon-16x16.png' %}">
     <link rel="manifest" href="{% static 'images/site.webmanifest' %}">
     <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}">
+
+    <style>
+        :root {
+            --pg-ink: #111827;
+            --pg-muted: #64748b;
+            --pg-line: #e2e8f0;
+            --pg-soft: #f5f7fb;
+            --pg-panel: #ffffff;
+            --pg-orange: #f97316;
+            --pg-blue: #2563eb;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            color: var(--pg-ink);
+            background:
+                radial-gradient(circle at top left, rgba(249, 115, 22, 0.08), transparent 28rem),
+                linear-gradient(180deg, #ffffff 0%, var(--pg-soft) 38%, #eef2f7 100%);
+            font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        .app-navbar {
+            background: rgba(17, 24, 39, 0.98);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.14);
+            backdrop-filter: blur(10px);
+            z-index: 1030;
+        }
+
+        .app-brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.7rem;
+            min-width: max-content;
+            color: #ffffff;
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        .brand-mark {
+            width: 46px;
+            height: 46px;
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 46px;
+            overflow: hidden;
+            color: #ffffff;
+            background: linear-gradient(135deg, #111827, #7c2d12);
+            border: 2px solid var(--pg-orange);
+            border-radius: 50%;
+            box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.12);
+        }
+
+        .brand-mark img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .brand-fallback {
+            position: absolute;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.82rem;
+            font-weight: 900;
+            letter-spacing: 0;
+        }
+
+        .brand-mark.logo-missing .brand-fallback {
+            display: flex;
+        }
+
+        .brand-text {
+            color: #ffffff;
+            font-size: 1.05rem;
+            letter-spacing: 0;
+        }
+
+        .navbar-toggler {
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .navbar-toggler:focus {
+            box-shadow: 0 0 0 0.16rem rgba(249, 115, 22, 0.34);
+        }
+
+        .navbar-toggler-icon {
+            filter: invert(1);
+        }
+
+        .app-navbar .nav-link {
+            color: rgba(255, 255, 255, 0.74) !important;
+            border-radius: 999px;
+            font-weight: 700;
+            padding: 0.55rem 0.75rem !important;
+            transition: color 0.2s ease, background-color 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .app-navbar .nav-link:hover,
+        .app-navbar .nav-link:focus {
+            color: #ffffff !important;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .app-shell {
+            width: min(100%, 1220px);
+            margin: 0 auto;
+            padding: 34px 18px 70px;
+        }
+
+        .page-card,
+        .card,
+        .table-custom {
+            border: 1px solid var(--pg-line) !important;
+            border-radius: 8px !important;
+            background: var(--pg-panel);
+            box-shadow: 0 14px 34px rgba(15, 23, 42, 0.07) !important;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            letter-spacing: 0;
+        }
+
+        h2.fw-bold {
+            font-size: clamp(1.75rem, 3vw, 2.45rem);
+        }
+
+        .text-muted,
+        .text-secondary {
+            color: var(--pg-muted) !important;
+        }
+
+        .table-custom {
+            overflow: hidden;
+        }
+
+        .table {
+            --bs-table-hover-bg: #f8fafc;
+        }
+
+        .table thead th {
+            color: #475569;
+            background: #f8fafc !important;
+            border-bottom: 1px solid var(--pg-line);
+            font-size: 0.78rem;
+            letter-spacing: 0;
+            text-transform: uppercase;
+        }
+
+        .table tbody td {
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+
+        .btn {
+            border-radius: 8px;
+            font-weight: 700;
+        }
+
+        .btn-primary {
+            --bs-btn-bg: var(--pg-blue);
+            --bs-btn-border-color: var(--pg-blue);
+            --bs-btn-hover-bg: #1d4ed8;
+            --bs-btn-hover-border-color: #1d4ed8;
+        }
+
+        .btn-warning {
+            --bs-btn-bg: #f59e0b;
+            --bs-btn-border-color: #f59e0b;
+            --bs-btn-hover-bg: #d97706;
+            --bs-btn-hover-border-color: #d97706;
+            color: #111827;
+        }
+
+        .form-control,
+        .form-select {
+            border-color: var(--pg-line);
+            border-radius: 8px;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #93c5fd;
+            box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.12);
+        }
+
+        @media (max-width: 991.98px) {
+            .app-navbar .navbar-nav {
+                gap: 0.15rem;
+                padding-top: 1rem;
+            }
+
+            .app-navbar .nav-link {
+                padding-left: 1rem !important;
+            }
+
+            .app-shell {
+                padding-top: 24px;
+            }
+        }
+    </style>
 </head>
 <body>
-
-    <nav class="navbar navbar-expand-lg fixed-top">
-        <div class="container">
-            <!-- LOGOTIPO COM LINK PARA A PÁGINA PRINCIPAL E CSS CORRIGIDO -->
-            <a class="navbar-brand" href="{% url 'landing' %}">
-                <img src="{% static 'images/logo.png' %}" alt="Power Gym Logo" class="rounded-circle shadow-sm" style="width: 50px; height: 50px; object-fit: cover; border: 2px solid #ffc107;">
+    <nav class="navbar navbar-expand-lg app-navbar sticky-top">
+        <div class="container-fluid px-3 px-lg-4">
+            <a class="app-brand navbar-brand" href="{% url 'landing' %}" aria-label="PowerGym">
+                <span class="brand-mark">
+                    <img src="{% static 'images/logo.png' %}" alt="" onerror="this.style.display='none'; this.closest('.brand-mark').classList.add('logo-missing');">
+                    <span class="brand-fallback">PG</span>
+                </span>
+                <span class="brand-text">PowerGym</span>
             </a>
-            
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Abrir menu">
+                <span class="navbar-toggler-icon"></span>
             </button>
+
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
-    
-    <!-- SE O UTILIZADOR TIVER FEITO LOGIN -->
-    {% if request.user.is_authenticated %}
-        
-        <!-- Se for o Administrador (Tu) mostra o menu completo -->
-        {% if request.user.is_superuser %}
-            <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Dashboard</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'socio_list' %}">Sócios</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'treinador_list' %}">Equipa</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'aula_list' %}">Aulas</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'planotreino_list' %}">Treinos</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'pagamento_list' %}">Finanças</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'exercicio_list' %}">Exercícios</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'modalidade_list' %}">Modalidades</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'inscricao_list' %}">Inscrições</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'gestao_acessos' %}">Acessos</a></li>
-        
-        <!-- Se for o Cliente, mostra só o atalho para a conta dele -->
-        {% else %}
-            <li class="nav-item">
-                <a class="nav-link text-primary fw-bold" href="{% url 'perfil_cliente' %}">A Minha Conta</a>
-            </li>
-        {% endif %}
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center gap-lg-1">
+                    {% if request.user.is_authenticated %}
+                        {% if request.user.is_superuser %}
+                            <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Dashboard</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'socio_list' %}">Sócios</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'treinador_list' %}">Equipa</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'aula_list' %}">Aulas</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'planotreino_list' %}">Treinos</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'pagamento_list' %}">Finanças</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'exercicio_list' %}">Exercícios</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'modalidade_list' %}">Modalidades</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'inscricao_list' %}">Inscrições</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'gestao_acessos' %}">Acessos</a></li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'perfil_cliente' %}">A Minha Conta</a>
+                            </li>
+                        {% endif %}
 
-        <!-- Botão de Sair (para ambos) -->
-        <li class="nav-item ms-3">
-            <form action="{% url 'logout' %}" method="post" class="m-0">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill">Sair</button>
-            </form>
-        </li>
-
-    <!-- SE NÃO TIVER LOGIN (Visitantes na página de login, por exemplo) -->
-    {% else %}
-        <li class="nav-item">
-            <a class="nav-link fw-bold" href="{% url 'landing' %}">Voltar ao Site Principal</a>
-        </li>
-    {% endif %}
-
+                        <li class="nav-item ms-lg-2">
+                            <form action="{% url 'logout' %}" method="post" class="m-0">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-3">Sair</button>
+                            </form>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link fw-bold" href="{% url 'landing' %}">Voltar ao Site Principal</a>
+                        </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>
     </nav>
 
-    <div class="container my-4">
+    <main class="app-shell">
         {% block content %}
         {% endblock content %}
-    </div>
+    </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
