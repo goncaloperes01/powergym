@@ -12,6 +12,17 @@
                     <p class="text-white-50 mb-0 mt-1 small">Acede à tua conta PowerGym</p>
                 </div>
                 <div class="card-body p-4 p-md-5">
+                    {% if form.errors %}
+                        <div class="alert alert-danger rounded-4 border-0 shadow-sm mb-4" role="alert">
+                            <div class="d-flex gap-2 align-items-start">
+                                <i class="bi bi-exclamation-triangle-fill mt-1"></i>
+                                <div>
+                                    <strong>Nome de utilizador ou palavra-passe incorretos.</strong>
+                                    <div class="small mt-1">Verifica os dados e tenta novamente.</div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
                     
                     <form method="POST">
                         {% csrf_token %}

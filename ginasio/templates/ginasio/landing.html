@@ -64,6 +64,15 @@
             color: #ffffff;
         }
 
+        .nav-auth-action {
+            min-width: 118px;
+            min-height: 54px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.78rem 1.05rem;
+        }
+
         .hero {
             min-height: calc(100vh - 78px);
             color: #ffffff;
@@ -329,13 +338,13 @@
             <div class="ms-auto d-flex flex-wrap gap-2 align-items-center justify-content-end">
                 {% if request.user.is_authenticated %}
                     {% if request.user.is_superuser %}
-                        <a href="{% url 'index' %}" class="btn btn-sm btn-outline-light">Dashboard</a>
+                        <a href="{% url 'index' %}" class="btn btn-sm btn-outline-light nav-auth-action">Dashboard</a>
                     {% else %}
-                        <a href="{% url 'perfil_cliente' %}" class="btn btn-sm btn-outline-light">A Minha Conta</a>
+                        <a href="{% url 'perfil_cliente' %}" class="btn btn-sm btn-outline-light nav-auth-action">A Minha Conta</a>
                     {% endif %}
                     <form action="{% url 'logout' %}" method="post" class="m-0">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-sm btn-power">Sair</button>
+                        <button type="submit" class="btn btn-sm btn-power nav-auth-action">Sair</button>
                     </form>
                 {% else %}
                     <a href="{% url 'login' %}" class="nav-link-public px-2">Login</a>
