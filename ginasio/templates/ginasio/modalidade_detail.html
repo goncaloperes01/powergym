@@ -13,11 +13,13 @@
             </ol>
         </nav>
     </div>
-    <div class="col-4 text-end">
-        <a href="{% url 'modalidade_list' %}" class="btn btn-outline-secondary me-2">Voltar ao Catálogo</a>
+    <div class="col-4">
+        <div class="d-flex flex-wrap justify-content-end gap-3">
+            <a href="{% url 'modalidade_list' %}" class="btn btn-outline-secondary">Voltar ao Catálogo</a>
         <!-- BOTÃO DE EDITAR NOVO: -->
-        <a href="{% url 'modalidade_update' modalidade.pk %}" class="btn btn-warning fw-bold">Editar Dados</a>
-        <a href="{% url 'modalidade_delete' modalidade.pk %}" class="btn btn-danger">Apagar</a>
+            <a href="{% url 'modalidade_update' modalidade.pk %}" class="btn btn-warning fw-bold">Editar Dados</a>
+            <a href="{% url 'modalidade_delete' modalidade.pk %}" class="btn btn-danger">Apagar</a>
+        </div>
     </div>
 </div>
 

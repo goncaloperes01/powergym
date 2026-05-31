@@ -35,6 +35,7 @@
                         <option value="treinador_existente">🔗 Dar conta a Treinador EXISTENTE</option>
                         <option value="socio_existente">🔗 Associar nova conta a Sócio EXISTENTE</option>
                         <option value="apagar_utilizador">🗑️ Apagar Conta de Login</option>
+                        <option value="reset_password">Reset password de um utilizador</option>
                     </select>
                 </div>
 
@@ -116,6 +117,27 @@
                     </select>
                 </div>
 
+                <div id="dados_reset_password" style="display: none;" class="mb-4">
+                    <h5 class="fw-bold mb-3 border-bottom pb-2 text-primary">Reset password</h5>
+                    <div class="row g-3">
+                        <div class="col-md-7">
+                            <label class="form-label small fw-bold">Utilizador</label>
+                            <select name="reset_user_id" id="input_reset_user_id" class="form-select">
+                                <option value="" selected disabled>-- Seleciona o Utilizador --</option>
+                                {% for u in utilizadores_comuns %}
+                                    <option value="{{ u.id }}">{{ u.username }} {% if u.email %}({{ u.email }}){% endif %}</option>
+                                {% empty %}
+                                    <option value="" disabled>NÃ£o hÃ¡ utilizadores comuns registados.</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label small fw-bold">Nova password</label>
+                            <input type="password" name="nova_password" id="input_nova_password" class="form-control">
+                        </div>
+                    </div>
+                </div>
+
                 <button type="submit" id="btn_submit" class="btn btn-dark w-100 fw-bold py-2 shadow-sm" style="display: none;">Criar Acesso</button>
             </form>
         </div>
@@ -133,6 +155,7 @@
         document.getElementById('dados_treinador_existente').style.display = 'none';
         document.getElementById('dados_socio_existente').style.display = 'none';
         document.getElementById('dados_apagar_utilizador').style.display = 'none';
+        document.getElementById('dados_reset_password').style.display = 'none';
         btnSubmit.style.display = 'block';
         
         // Retirar a obrigatoriedade de todos os campos ocultos
@@ -142,6 +165,8 @@
         document.getElementById('input_treinador_id').required = false;
         document.getElementById('input_socio_id').required = false;
         document.getElementById('input_user_id').required = false;
+        document.getElementById('input_reset_user_id').required = false;
+        document.getElementById('input_nova_password').required = false;
 
         // Resetar o estilo do botão para o padrão
         btnSubmit.className = "btn btn-dark w-100 fw-bold py-2 shadow-sm";
@@ -154,6 +179,12 @@
             // Botão muda para vermelho!
             btnSubmit.className = "btn btn-danger w-100 fw-bold py-2 shadow-sm";
             btnSubmit.innerHTML = "Apagar Conta Definitivamente";
+        } else if (opcao === 'reset_password') {
+            document.getElementById('dados_reset_password').style.display = 'block';
+            document.getElementById('input_reset_user_id').required = true;
+            document.getElementById('input_nova_password').required = true;
+            btnSubmit.className = "btn btn-primary w-100 fw-bold py-2 shadow-sm";
+            btnSubmit.innerHTML = "Alterar Password";
         } else {
             // Para as opções de Criação, mostramos sempre a zona de Login
             document.getElementById('dados_login').style.display = 'block';

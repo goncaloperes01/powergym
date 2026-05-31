@@ -27,7 +27,7 @@ def landing_page(request):
     """
     Página principal pública do site (Landing Page).
     """
-    modalidades_destaque = Modalidade.objects.all()[:3]
+    modalidades_destaque = Modalidade.objects.all()
     equipa_destaque = Treinador.objects.all()[:3]
     
     context = {
@@ -662,6 +662,23 @@ def gestao_acessos(request):
                 messages.success(request, f'Conta de acesso "{nome_apagado}" eliminada com sucesso!')
             except User.DoesNotExist:
                 messages.error(request, 'Utilizador não encontrado.')
+            return redirect('gestao_acessos')
+
+        # --- LÓGICA: RESET DE PASSWORD ---
+        if tipo_conta == 'reset_password':
+            user_id = request.POST.get('reset_user_id')
+            nova_password = request.POST.get('nova_password')
+            if not nova_password:
+                messages.error(request, 'Indica a nova palavra-passe.')
+                return redirect('gestao_acessos')
+
+            try:
+                user_a_alterar = User.objects.get(pk=user_id, is_superuser=False)
+                user_a_alterar.set_password(nova_password)
+                user_a_alterar.save()
+                messages.success(request, f'Palavra-passe de "{user_a_alterar.username}" alterada com sucesso!')
+            except (User.DoesNotExist, ValueError):
+                messages.error(request, 'Utilizador nao encontrado.')
             return redirect('gestao_acessos')
 
         # --- LÓGICA EXISTENTE: CRIAR CONTAS ---

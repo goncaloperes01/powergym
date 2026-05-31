@@ -228,6 +228,44 @@
             padding: 24px;
         }
 
+        .classes-carousel {
+            position: relative;
+        }
+
+        .classes-viewport {
+            overflow: hidden;
+        }
+
+        .classes-track {
+            display: flex;
+            gap: 24px;
+            transition: transform 0.35s ease;
+            will-change: transform;
+        }
+
+        .classes-slide {
+            flex: 0 0 calc((100% - 48px) / 3);
+            min-width: 0;
+        }
+
+        .carousel-arrow {
+            width: 46px;
+            height: 46px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--pg-ink);
+            background: #ffffff;
+            border: 1px solid var(--pg-line);
+            border-radius: 999px;
+            box-shadow: 0 12px 26px rgba(15, 23, 42, 0.12);
+        }
+
+        .carousel-arrow:disabled {
+            opacity: 0.42;
+            cursor: not-allowed;
+        }
+
         .intensity-badge {
             display: inline-flex;
             align-items: center;
@@ -323,6 +361,10 @@
 
             .section-pad {
                 padding: 28px 0 64px;
+            }
+
+            .classes-slide {
+                flex-basis: 100%;
             }
         }
     </style>
@@ -462,9 +504,20 @@
                     </div>
                 </div>
 
-                <div class="row g-4">
+                {% if modalidades %}
+                    <div class="classes-carousel" data-classes-carousel>
+                        <div class="d-flex justify-content-end gap-2 mb-3">
+                            <button class="carousel-arrow" type="button" data-carousel-prev aria-label="Ver modalidades anteriores">
+                                <i class="bi bi-chevron-left"></i>
+                            </button>
+                            <button class="carousel-arrow" type="button" data-carousel-next aria-label="Ver modalidades seguintes">
+                                <i class="bi bi-chevron-right"></i>
+                            </button>
+                        </div>
+                        <div class="classes-viewport">
+                            <div class="classes-track">
                     {% for modalidade in modalidades %}
-                        <div class="col-md-4">
+                        <div class="classes-slide">
                             <article class="class-card">
                                 <span class="intensity-badge">
                                     <i class="bi bi-lightning-charge-fill"></i>
@@ -476,16 +529,17 @@
                                 </p>
                             </article>
                         </div>
-                    {% empty %}
-                        <div class="col-12">
+                    {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
                             <div class="class-card text-center">
                                 <i class="bi bi-activity fs-1 text-secondary d-block mb-3"></i>
                                 <h3 class="h5 fw-bold">Modalidades em preparação</h3>
                                 <p class="text-secondary mb-0">Assim que forem adicionadas no painel de gestão, aparecem aqui automaticamente.</p>
                             </div>
-                        </div>
-                    {% endfor %}
-                </div>
+                {% endif %}
             </div>
         </section>
 
@@ -576,5 +630,43 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.querySelectorAll('[data-classes-carousel]').forEach((carousel) => {
+            const track = carousel.querySelector('.classes-track');
+            const slides = Array.from(carousel.querySelectorAll('.classes-slide'));
+            const prev = carousel.querySelector('[data-carousel-prev]');
+            const next = carousel.querySelector('[data-carousel-next]');
+            let currentIndex = 0;
+
+            function visibleSlides() {
+                return window.matchMedia('(max-width: 767.98px)').matches ? 1 : 3;
+            }
+
+            function updateCarousel() {
+                const maxIndex = Math.max(0, slides.length - visibleSlides());
+                currentIndex = Math.min(currentIndex, maxIndex);
+                const firstSlide = slides[0];
+                const gap = parseFloat(getComputedStyle(track).gap) || 0;
+                const slideWidth = firstSlide ? firstSlide.getBoundingClientRect().width + gap : 0;
+
+                track.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
+                prev.disabled = currentIndex === 0;
+                next.disabled = currentIndex >= maxIndex;
+            }
+
+            prev.addEventListener('click', () => {
+                currentIndex = Math.max(0, currentIndex - 1);
+                updateCarousel();
+            });
+
+            next.addEventListener('click', () => {
+                currentIndex += 1;
+                updateCarousel();
+            });
+
+            window.addEventListener('resize', updateCarousel);
+            updateCarousel();
+        });
+    </script>
 </body>
 </html>
