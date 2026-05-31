@@ -3,8 +3,8 @@
 {% block title %}Detalhe do Sócio - PowerGym{% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col-8">
+<div class="row mb-4 g-3 align-items-start">
+    <div class="col-md-8">
         <h2 class="fw-bold mb-0">Ficha de Sócio</h2>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
@@ -13,10 +13,12 @@
             </ol>
         </nav>
     </div>
-    <div class="col-4 text-end">
-        <a href="{% url 'socio_list' %}" class="btn btn-outline-secondary me-2">Voltar</a>
-        <a href="{% url 'socio_update' socio.pk %}" class="btn btn-warning btn-sm">Editar</a>
-        <a href="{% url 'socio_delete' socio.pk %}" class="btn btn-danger btn-sm">Apagar</a>
+    <div class="col-md-4">
+        <div class="d-flex flex-wrap justify-content-md-end gap-3">
+            <a href="{% url 'socio_list' %}" class="btn btn-outline-secondary">Voltar</a>
+            <a href="{% url 'socio_update' socio.pk %}" class="btn btn-warning btn-sm">Editar</a>
+            <a href="{% url 'socio_delete' socio.pk %}" class="btn btn-danger btn-sm">Apagar</a>
+        </div>
     </div>
 </div>
 

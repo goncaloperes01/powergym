@@ -228,22 +228,26 @@
             padding: 24px;
         }
 
-        .classes-carousel {
+        .classes-carousel,
+        .trainers-carousel {
             position: relative;
         }
 
-        .classes-viewport {
+        .classes-viewport,
+        .trainers-viewport {
             overflow: hidden;
         }
 
-        .classes-track {
+        .classes-track,
+        .trainers-track {
             display: flex;
             gap: 24px;
             transition: transform 0.35s ease;
             will-change: transform;
         }
 
-        .classes-slide {
+        .classes-slide,
+        .trainers-slide {
             flex: 0 0 calc((100% - 48px) / 3);
             min-width: 0;
         }
@@ -363,7 +367,8 @@
                 padding: 28px 0 64px;
             }
 
-            .classes-slide {
+            .classes-slide,
+            .trainers-slide {
                 flex-basis: 100%;
             }
         }
@@ -553,9 +558,20 @@
                     </div>
                 </div>
 
-                <div class="row g-4 justify-content-center">
+                {% if treinadores %}
+                    <div class="trainers-carousel" data-trainers-carousel>
+                        <div class="d-flex justify-content-end gap-2 mb-3">
+                            <button class="carousel-arrow" type="button" data-trainers-prev aria-label="Ver treinadores anteriores">
+                                <i class="bi bi-chevron-left"></i>
+                            </button>
+                            <button class="carousel-arrow" type="button" data-trainers-next aria-label="Ver treinadores seguintes">
+                                <i class="bi bi-chevron-right"></i>
+                            </button>
+                        </div>
+                        <div class="trainers-viewport">
+                            <div class="trainers-track">
                     {% for treinador in treinadores %}
-                        <div class="col-md-4 col-lg-3">
+                        <div class="trainers-slide">
                             <article class="trainer-card">
                                 {% if treinador.foto %}
                                     <img src="{{ treinador.foto.url }}" alt="{{ treinador.nome }}" class="trainer-photo mb-3">
@@ -568,16 +584,19 @@
                                 <p class="text-secondary mb-0">{{ treinador.especialidade|default:"Personal Trainer" }}</p>
                             </article>
                         </div>
-                    {% empty %}
-                        <div class="col-12">
+                    {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                        <div>
                             <div class="trainer-card">
                                 <i class="bi bi-people fs-1 text-secondary d-block mb-3"></i>
                             <h3 class="h5 fw-bold">Equipa em atualização</h3>
                             <p class="text-secondary mb-0">Adiciona treinadores no painel e esta secção fica preenchida automaticamente.</p>
                             </div>
                         </div>
-                    {% endfor %}
-                </div>
+                {% endif %}
             </div>
         </section>
 
@@ -631,11 +650,11 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.querySelectorAll('[data-classes-carousel]').forEach((carousel) => {
-            const track = carousel.querySelector('.classes-track');
-            const slides = Array.from(carousel.querySelectorAll('.classes-slide'));
-            const prev = carousel.querySelector('[data-carousel-prev]');
-            const next = carousel.querySelector('[data-carousel-next]');
+        function setupLandingCarousel(carousel, selectors) {
+            const track = carousel.querySelector(selectors.track);
+            const slides = Array.from(carousel.querySelectorAll(selectors.slide));
+            const prev = carousel.querySelector(selectors.prev);
+            const next = carousel.querySelector(selectors.next);
             let currentIndex = 0;
 
             function visibleSlides() {
@@ -666,6 +685,24 @@
 
             window.addEventListener('resize', updateCarousel);
             updateCarousel();
+        }
+
+        document.querySelectorAll('[data-classes-carousel]').forEach((carousel) => {
+            setupLandingCarousel(carousel, {
+                track: '.classes-track',
+                slide: '.classes-slide',
+                prev: '[data-carousel-prev]',
+                next: '[data-carousel-next]',
+            });
+        });
+
+        document.querySelectorAll('[data-trainers-carousel]').forEach((carousel) => {
+            setupLandingCarousel(carousel, {
+                track: '.trainers-track',
+                slide: '.trainers-slide',
+                prev: '[data-trainers-prev]',
+                next: '[data-trainers-next]',
+            });
         });
     </script>
 </body>

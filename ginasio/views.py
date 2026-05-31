@@ -28,7 +28,7 @@ def landing_page(request):
     Página principal pública do site (Landing Page).
     """
     modalidades_destaque = Modalidade.objects.all()
-    equipa_destaque = Treinador.objects.all()[:3]
+    equipa_destaque = Treinador.objects.all()
     
     context = {
         'modalidades': modalidades_destaque,

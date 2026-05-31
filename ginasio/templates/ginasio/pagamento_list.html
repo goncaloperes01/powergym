@@ -45,9 +45,11 @@
                             {% endif %}
                         </td>
                         <td class="text-end">
-                            <a href="{% url 'pagamento_detail' pagamento.pk %}" class="btn btn-sm btn-outline-info">Ver</a>
-                            <a href="{% url 'pagamento_update' pagamento.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
-                            <a href="{% url 'pagamento_delete' pagamento.pk %}" class="btn btn-sm btn-outline-danger">Apagar</a>
+                            <div class="d-flex flex-wrap justify-content-end gap-2">
+                                <a href="{% url 'pagamento_detail' pagamento.pk %}" class="btn btn-sm btn-outline-info">Ver</a>
+                                <a href="{% url 'pagamento_update' pagamento.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
+                                <a href="{% url 'pagamento_delete' pagamento.pk %}" class="btn btn-sm btn-outline-danger">Apagar</a>
+                            </div>
                         </td>
                     </tr>
                     {% empty %}

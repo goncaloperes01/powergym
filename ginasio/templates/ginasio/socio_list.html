@@ -30,9 +30,11 @@
                 <td class="text-muted">{{ socio.email }}</td>
                 <td>{{ socio.dataAdesao|date:"d M Y" }}</td>
                 <td class="text-end">
-                    <a href="{% url 'socio_detail' socio.pk %}" class="btn btn-sm btn-outline-secondary">Ver Ficha</a>
-                    <a href="{% url 'socio_update' socio.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
-                    <a href="{% url 'socio_delete' socio.pk %}" class="btn btn-sm btn-outline-danger">Apagar</a>
+                    <div class="d-flex flex-wrap justify-content-end gap-2">
+                        <a href="{% url 'socio_detail' socio.pk %}" class="btn btn-sm btn-outline-secondary">Ver Ficha</a>
+                        <a href="{% url 'socio_update' socio.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
+                        <a href="{% url 'socio_delete' socio.pk %}" class="btn btn-sm btn-outline-danger">Apagar</a>
+                    </div>
                 </td>
             </tr>
             {% empty %}

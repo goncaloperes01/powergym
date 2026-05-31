@@ -9,7 +9,7 @@
             <div class="col-8">
                 {% if exercicio %}
                     <h2 class="fw-bold mb-0 text-dark">Editar Exercício</h2>
-                    <a href="{% url 'exercicio_delete' exercicio.pk %}" class="btn btn-danger">Apagar</a>
+                    <a href="{% url 'exercicio_delete' exercicio.pk %}" class="btn btn-danger mt-3">Apagar</a>
                 {% else %}
                     <h2 class="fw-bold mb-0 text-dark">Adicionar Exercício ao Plano</h2>
                 {% endif %}
