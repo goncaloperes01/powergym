@@ -66,7 +66,7 @@ class PlanoTreino(models.Model):
 
 
 class Exercicio(models.Model):
-    planoTreino = models.ForeignKey(PlanoTreino, on_delete=models.CASCADE)
+    planoTreino = models.ForeignKey(PlanoTreino, on_delete=models.SET_NULL, null=True, blank=True)
     nome = models.CharField(max_length=50)
     series = models.IntegerField()
     repeticoes = models.IntegerField()

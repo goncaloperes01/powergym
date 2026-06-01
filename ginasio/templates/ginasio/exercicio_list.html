@@ -25,15 +25,21 @@
                         <div class="bg-light p-3 rounded-3">
                             <i class="bi bi-lightning-charge-fill text-warning fs-4"></i>
                         </div>
-                        <span class="badge bg-info text-dark rounded-pill px-3">
-                            {{ exercicio.planoTreino.socio.nome|default:"Geral" }}
-                        </span>
+                        {% if exercicio.planoTreino %}
+                            <span class="badge bg-info text-dark rounded-pill px-3">{{ exercicio.planoTreino.socio.nome }}</span>
+                        {% else %}
+                            <span class="badge bg-success rounded-pill px-3">Catálogo Geral</span>
+                        {% endif %}
                     </div>
                     
                     <h5 class="fw-bold text-dark mb-1">{{ exercicio.nome|default:"Exercício sem nome" }}</h5>
                     <p class="text-muted small mb-3">
                         <i class="bi bi-clipboard-data me-1"></i> 
-                        Plano: {{ exercicio.planoTreino|default:"Nenhum" }}
+                        {% if exercicio.planoTreino %}
+                            Plano: {{ exercicio.planoTreino }}
+                        {% else %}
+                            Exercício geral, pronto para importar para planos de treino.
+                        {% endif %}
                     </p>
 
                     <div class="row g-2 mb-4">

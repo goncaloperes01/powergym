@@ -405,7 +405,9 @@ def exercicio_create(request):
         form = ExercicioForm(request.POST)
         if form.is_valid():
             exercicio = form.save()
-            return redirect('planotreino_detail', pk=exercicio.planoTreino.pk)
+            if exercicio.planoTreino:
+                return redirect('planotreino_detail', pk=exercicio.planoTreino.pk)
+            return redirect('exercicio_list')
     else:
         plano_id = request.GET.get('plano', None)
         if plano_id:
@@ -420,8 +422,10 @@ def exercicio_update(request, pk):
     if request.method == 'POST':
         form = ExercicioForm(request.POST, instance=exercicio)
         if form.is_valid():
-            form.save()
-            return redirect('planotreino_detail', pk=exercicio.planoTreino.pk)
+            exercicio = form.save()
+            if exercicio.planoTreino:
+                return redirect('planotreino_detail', pk=exercicio.planoTreino.pk)
+            return redirect('exercicio_list')
     else:
         form = ExercicioForm(instance=exercicio)
     return render(request, 'ginasio/exercicio_form.html', {'form': form, 'exercicio': exercicio})
@@ -431,9 +435,9 @@ def exercicio_delete(request, pk):
     exercicio = get_object_or_404(Exercicio, pk=pk)
     next_url = request.GET.get('next') or request.POST.get('next')
     if request.method == 'POST':
-        plano_id = exercicio.planoTreino.pk
+        plano_id = exercicio.planoTreino.pk if exercicio.planoTreino else None
         exercicio.delete()
-        if next_url == 'list':
+        if next_url == 'list' or not plano_id:
             return redirect('exercicio_list')
         return redirect('planotreino_detail', pk=plano_id)
     return render(request, 'ginasio/exercicio_confirm_delete.html', {'exercicio': exercicio, 'next_url': next_url})

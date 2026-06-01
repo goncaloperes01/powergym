@@ -33,9 +33,13 @@
                     </div>
                     <div class="text-md-end">
                         <p class="text-muted small text-uppercase fw-bold mb-1">Plano</p>
-                        <a href="{% url 'planotreino_detail' exercicio.planoTreino.pk %}" class="btn btn-outline-dark rounded-pill fw-bold">
-                            {{ exercicio.planoTreino.socio.nome }}
-                        </a>
+                        {% if exercicio.planoTreino %}
+                            <a href="{% url 'planotreino_detail' exercicio.planoTreino.pk %}" class="btn btn-outline-dark rounded-pill fw-bold">
+                                {{ exercicio.planoTreino.socio.nome }}
+                            </a>
+                        {% else %}
+                            <span class="btn btn-outline-success rounded-pill fw-bold disabled">Catálogo Geral</span>
+                        {% endif %}
                     </div>
                 </div>
 
@@ -63,7 +67,11 @@
                 <div class="mt-4 p-4 rounded-4 bg-light">
                     <p class="text-muted small text-uppercase fw-bold mb-1">Plano de treino associado</p>
                     <p class="mb-0">
-                        {{ exercicio.planoTreino.objetivo }} - {{ exercicio.planoTreino.socio.nome }}
+                        {% if exercicio.planoTreino %}
+                            {{ exercicio.planoTreino.objetivo }} - {{ exercicio.planoTreino.socio.nome }}
+                        {% else %}
+                            Este exercício está no catálogo geral e pode ser importado para vários planos.
+                        {% endif %}
                     </p>
                 </div>
             </div>

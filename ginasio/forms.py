@@ -48,6 +48,13 @@ class PlanoTreinoForm(forms.ModelForm):
         }
 
 class ExercicioForm(forms.ModelForm):
+    planoTreino = forms.ModelChoiceField(
+        queryset=PlanoTreino.objects.all(),
+        required=False,
+        label='Plano de treino',
+        empty_label='Catálogo geral (sem plano associado)'
+    )
+
     class Meta:
         model = Exercicio
         fields = '__all__'
