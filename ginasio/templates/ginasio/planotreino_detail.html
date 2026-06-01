@@ -15,39 +15,45 @@
     </div>
     <div class="col-md-4">
         <div class="d-flex flex-wrap justify-content-md-end gap-3">
-        <a href="{% url 'planotreino_list' %}" class="btn btn-outline-secondary px-3 fw-medium me-2">Voltar</a>
-        <a href="{% url 'planotreino_update' plano.pk %}" class="btn btn-warning fw-bold px-3">Editar Plano</a>
-        <a href="{% url 'planotreino_delete' plano.pk %}" class="btn btn-danger">Apagar</a>
+            <a href="{% url 'planotreino_list' %}" class="btn btn-outline-secondary px-3 fw-medium">Voltar</a>
+            <a href="{% url 'planotreino_update' plano.pk %}" class="btn btn-warning fw-bold px-3">Editar Plano</a>
+            <a href="{% url 'planotreino_delete' plano.pk %}" class="btn btn-danger">Apagar</a>
         </div>
     </div>
 </div>
 
 <div class="row g-4">
-    <!-- Cabeçalho do Plano -->
     <div class="col-12">
         <div class="card border-0 shadow-sm bg-dark text-white p-4">
-            <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex flex-column flex-md-row justify-content-between gap-3">
                 <div>
                     <h5 class="text-light opacity-75 mb-1">Plano para {{ plano.socio.nome }}</h5>
                     <h2 class="fw-bold text-info mb-0">{{ plano.objetivo }}</h2>
                 </div>
-                <div class="text-end">
+                <div class="text-md-end">
                     <p class="small text-light opacity-75 mb-0 text-uppercase">Início</p>
                     <h5 class="fw-bold mb-0">{{ plano.data_inicio|date:"d M Y" }}</h5>
                 </div>
             </div>
             <hr class="border-light opacity-25">
-            <p class="mb-0 text-light opacity-75"><i class="bi bi-person-badge"></i> Prescrito por: <strong>{{ plano.treinador.nome }}</strong></p>
+            <p class="mb-0 text-light opacity-75">
+                <i class="bi bi-person-badge"></i> Prescrito por: <strong>{{ plano.treinador.nome }}</strong>
+            </p>
         </div>
     </div>
 
-    <!-- Tabela dos Exercícios associados a este Plano -->
     <div class="col-12">
         <div class="card border-0 shadow-sm">
-            <div class="card-header bg-light p-4 d-flex justify-content-between align-items-center border-bottom">
+            <div class="card-header bg-light p-4 d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 border-bottom">
                 <h5 class="fw-bold text-dark mb-0">Rotina de Exercícios</h5>
-                <!-- Este botão leva o ID do plano para já preencher automaticamente -->
-                <a href="{% url 'exercicio_create' %}?plano={{ plano.pk }}" class="btn btn-primary fw-bold px-4">+ Adicionar Exercício</a>
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="{% url 'planotreino_add_existing_exercicio' plano.pk %}" class="btn btn-outline-primary fw-bold px-4">
+                        <i class="bi bi-box-arrow-in-down me-1"></i> Adicionar Exercício Existente
+                    </a>
+                    <a href="{% url 'exercicio_create' %}?plano={{ plano.pk }}" class="btn btn-primary fw-bold px-4">
+                        <i class="bi bi-plus-lg me-1"></i> Adicionar Exercício
+                    </a>
+                </div>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -69,7 +75,10 @@
                                 <td class="text-center fw-medium">{{ ex.repeticoes }}</td>
                                 <td class="text-center text-muted">{{ ex.descanso_segundos }}s</td>
                                 <td class="text-end pe-4">
-                                    <a href="{% url 'exercicio_update' ex.pk %}" class="btn btn-sm btn-outline-warning rounded-pill px-3">Editar</a>
+                                    <div class="d-flex flex-wrap justify-content-end gap-2">
+                                        <a href="{% url 'exercicio_update' ex.pk %}" class="btn btn-sm btn-outline-warning rounded-pill px-3">Editar</a>
+                                        <a href="{% url 'exercicio_delete' ex.pk %}" class="btn btn-sm btn-outline-danger rounded-pill px-3">Apagar</a>
+                                    </div>
                                 </td>
                             </tr>
                             {% empty %}

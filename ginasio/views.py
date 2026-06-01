@@ -334,6 +334,30 @@ def planotreino_detail(request, pk):
     return render(request, 'ginasio/planotreino_detail.html', {'plano': plano, 'exercicios': exercicios_do_plano})
 
 @admin_required
+def planotreino_add_existing_exercicio(request, pk):
+    plano = get_object_or_404(PlanoTreino, pk=pk)
+
+    if request.method == 'POST':
+        exercicio_id = request.POST.get('exercicio_id')
+        exercicio_base = get_object_or_404(Exercicio, pk=exercicio_id)
+
+        Exercicio.objects.create(
+            planoTreino=plano,
+            nome=exercicio_base.nome,
+            series=exercicio_base.series,
+            repeticoes=exercicio_base.repeticoes,
+            descanso_segundos=exercicio_base.descanso_segundos,
+        )
+        messages.success(request, f'Exercício "{exercicio_base.nome}" adicionado ao plano.')
+        return redirect('planotreino_detail', pk=plano.pk)
+
+    exercicios_existentes = Exercicio.objects.exclude(planoTreino=plano).order_by('nome')
+    return render(request, 'ginasio/planotreino_add_existing_exercicio.html', {
+        'plano': plano,
+        'exercicios_existentes': exercicios_existentes,
+    })
+
+@admin_required
 def planotreino_create(request):
     if request.method == 'POST':
         form = PlanoTreinoForm(request.POST)
@@ -405,11 +429,14 @@ def exercicio_update(request, pk):
 @admin_required
 def exercicio_delete(request, pk):
     exercicio = get_object_or_404(Exercicio, pk=pk)
+    next_url = request.GET.get('next') or request.POST.get('next')
     if request.method == 'POST':
         plano_id = exercicio.planoTreino.pk
         exercicio.delete()
+        if next_url == 'list':
+            return redirect('exercicio_list')
         return redirect('planotreino_detail', pk=plano_id)
-    return render(request, 'ginasio/exercicio_confirm_delete.html', {'exercicio': exercicio})
+    return render(request, 'ginasio/exercicio_confirm_delete.html', {'exercicio': exercicio, 'next_url': next_url})
 
 # --- PAGAMENTOS ---
 @admin_required

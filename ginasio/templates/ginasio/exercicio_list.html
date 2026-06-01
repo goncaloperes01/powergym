@@ -17,7 +17,7 @@
     </div>
 
     <div class="row g-4">
-        {% for exercicio in object_list %}
+        {% for exercicio in exercicios %}
         <div class="col-md-6 col-lg-4">
             <div class="card h-100 border-0 shadow-sm rounded-4 hover-shadow transition">
                 <div class="card-body p-4">
@@ -55,6 +55,14 @@
                         <a href="{% url 'exercicio_detail' exercicio.pk %}" class="btn btn-outline-dark rounded-pill btn-sm fw-bold">
                             <i class="bi bi-eye me-1"></i> Ver Detalhes
                         </a>
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'exercicio_update' exercicio.pk %}" class="btn btn-outline-primary rounded-pill btn-sm fw-bold flex-fill">
+                                <i class="bi bi-pencil-square me-1"></i> Editar
+                            </a>
+                            <a href="{% url 'exercicio_delete' exercicio.pk %}?next=list" class="btn btn-outline-danger rounded-pill btn-sm fw-bold flex-fill">
+                                <i class="bi bi-trash me-1"></i> Apagar
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -1,0 +1,85 @@
+{% extends 'ginasio/base.html' %}
+
+{% block title %}Adicionar Exercício Existente - PowerGym{% endblock %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-start gap-3 mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Adicionar Exercício Existente</h2>
+            <p class="text-muted mb-0">
+                Escolhe um exercício do catálogo para copiar para o plano de <strong>{{ plano.socio.nome }}</strong>.
+            </p>
+        </div>
+        <a href="{% url 'planotreino_detail' plano.pk %}" class="btn btn-outline-secondary rounded-pill px-4 fw-bold">
+            <i class="bi bi-arrow-left me-1"></i> Voltar ao Plano
+        </a>
+    </div>
+
+    <div class="alert alert-info border-0 rounded-4 shadow-sm mb-4">
+        <i class="bi bi-info-circle-fill me-2"></i>
+        Ao adicionar, o sistema cria uma cópia com o mesmo nome, séries, repetições e descanso. O exercício original mantém-se no plano onde já estava.
+    </div>
+
+    <div class="row g-4">
+        {% for exercicio in exercicios_existentes %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                        <div class="bg-light rounded-3 p-3">
+                            <i class="bi bi-dumbbell text-primary fs-4"></i>
+                        </div>
+                        <span class="badge bg-light text-dark border rounded-pill px-3">
+                            {{ exercicio.planoTreino.socio.nome }}
+                        </span>
+                    </div>
+
+                    <h5 class="fw-bold text-dark mb-2">{{ exercicio.nome }}</h5>
+                    <p class="text-muted small mb-4">
+                        Plano de origem: {{ exercicio.planoTreino.objetivo }}
+                    </p>
+
+                    <div class="row g-2 mb-4">
+                        <div class="col-4">
+                            <div class="bg-light rounded-3 p-2 text-center">
+                                <small class="text-muted d-block">Séries</small>
+                                <span class="fw-bold">{{ exercicio.series }}x</span>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="bg-light rounded-3 p-2 text-center">
+                                <small class="text-muted d-block">Reps</small>
+                                <span class="fw-bold">{{ exercicio.repeticoes }}</span>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="bg-light rounded-3 p-2 text-center">
+                                <small class="text-muted d-block">Desc.</small>
+                                <span class="fw-bold">{{ exercicio.descanso_segundos }}s</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="exercicio_id" value="{{ exercicio.pk }}">
+                        <button type="submit" class="btn btn-primary rounded-pill w-100 fw-bold">
+                            <i class="bi bi-plus-lg me-1"></i> Adicionar a este Plano
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="card border-0 shadow-sm rounded-4 p-5 text-center">
+                <i class="bi bi-search fs-1 text-muted opacity-25 mb-3"></i>
+                <h5 class="text-muted">Ainda não existem exercícios disponíveis para importar.</h5>
+                <p class="text-muted mb-0">Cria primeiro exercícios noutros planos ou adiciona um novo exercício diretamente a este plano.</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

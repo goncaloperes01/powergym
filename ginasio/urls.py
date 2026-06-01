@@ -54,6 +54,7 @@ urlpatterns = [
     path('planos/novo/', views.planotreino_create, name='planotreino_create'),
     path('planos/<int:pk>/editar/', views.planotreino_update, name='planotreino_update'),
     path('planos/<int:pk>/apagar/', views.planotreino_delete, name='planotreino_delete'),
+    path('planos/<int:pk>/adicionar-exercicio-existente/', views.planotreino_add_existing_exercicio, name='planotreino_add_existing_exercicio'),
 
     # ROTAS PARA EXERCÍCIOS
     path('exercicios/', views.exercicio_list, name='exercicio_list'),
