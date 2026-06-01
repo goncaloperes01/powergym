@@ -207,9 +207,13 @@ def aula_list(request):
     aulas = Aulas.objects.all().order_by('data', 'hora')
     return render(request, 'ginasio/aula_list.html', {'aulas': aulas})
 
-@admin_required
+@login_required
 def aula_detail(request, pk):
     aula = get_object_or_404(Aulas, pk=pk)
+    if not request.user.is_superuser:
+        if not hasattr(request.user, 'treinador') or aula.treinador_id != request.user.treinador.id:
+            return redirect('redirecionar_login')
+
     # MAGIA: Vamos buscar todas as inscrições que pertencem SÓ a esta aula!
     inscricoes_da_aula = Inscricao.objects.filter(aula=aula)
     
